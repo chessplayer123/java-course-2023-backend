@@ -17,7 +17,7 @@ public class StartCommand implements Command {
 
     @Override
     public String description() {
-        return "register user (if new) and start chat";
+        return "register user";
     }
 
     @Override

@@ -7,7 +7,7 @@ import edu.java.bot.commands.UnTrackCommand;
 import edu.java.bot.link.GithubLinkHandler;
 import edu.java.bot.link.LinkHandler;
 import edu.java.bot.link.StackOverflowLinkHandler;
-import edu.java.bot.processor.FsmChatProcessor;
+import edu.java.bot.processor.DefaultChatProcessor;
 import edu.java.bot.user.InMemoryUserService;
 import edu.java.bot.user.UserService;
 import jakarta.annotation.PostConstruct;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LinkTrackerBot extends Bot {
     public LinkTrackerBot(String token) {
-        super(token, new FsmChatProcessor());
+        super(token, new DefaultChatProcessor());
     }
 
     @PostConstruct

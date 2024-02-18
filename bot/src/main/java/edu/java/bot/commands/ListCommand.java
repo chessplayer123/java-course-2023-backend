@@ -1,13 +1,12 @@
 package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.link.Link;
 import edu.java.bot.user.UserIsNotRegisteredException;
 import edu.java.bot.user.UserService;
-import lombok.RequiredArgsConstructor;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ListCommand implements Command {
@@ -36,8 +35,8 @@ public class ListCommand implements Command {
             builder.append("List of tracked links:\n");
             int i = 0;
             for (Link link : links) {
-                builder.append(++i).append(". ").append(link.url()).
-                    append(" [Resource: ").append(link.domain()).append("]\n");
+                builder.append(++i).append(". ").append(link.url())
+                    .append(" [Resource: ").append(link.domain()).append("]\n");
             }
 
             return new SendMessage(update.message().chat().id(), builder.toString());

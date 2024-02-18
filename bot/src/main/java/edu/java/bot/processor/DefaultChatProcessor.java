@@ -7,7 +7,7 @@ import edu.java.bot.commands.Command;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FsmChatProcessor implements ChatProcessor {
+public class DefaultChatProcessor implements ChatProcessor {
     private final List<Command> commands = new ArrayList<>();
 
     @Override

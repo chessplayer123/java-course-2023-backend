@@ -7,9 +7,9 @@ import edu.java.bot.link.Link;
 import edu.java.bot.link.LinkHandler;
 import edu.java.bot.user.UserIsNotRegisteredException;
 import edu.java.bot.user.UserService;
-import lombok.RequiredArgsConstructor;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class TrackCommand implements Command {
