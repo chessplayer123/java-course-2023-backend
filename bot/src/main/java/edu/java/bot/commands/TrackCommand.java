@@ -29,7 +29,9 @@ public class TrackCommand implements Command {
 
     @Override
     public boolean supports(Update update) {
-        if (expectedUsers.contains(update.message().chat().id())) {
+        if (update.message() == null) {
+            return false;
+        } else if (expectedUsers.contains(update.message().chat().id())) {
             return true;
         }
         return update.message().text().equals(command());
@@ -40,7 +42,7 @@ public class TrackCommand implements Command {
         long userId = update.message().chat().id();
         if (!expectedUsers.contains(userId)) {
             expectedUsers.add(userId);
-            return new SendMessage(userId, "Enter the link:");
+            return new SendMessage(userId, "Enter the link");
         }
 
         expectedUsers.remove(userId);

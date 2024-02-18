@@ -3,6 +3,7 @@ package edu.java.bot.commands;
 import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.user.UserIsNotRegisteredException;
 
 public interface Command {
     String command();
@@ -10,10 +11,10 @@ public interface Command {
     String description();
 
     default boolean supports(Update update) {
-        return update.message().text().equals(command());
+        return update.message() != null && update.message().text().equals(command());
     }
 
-    SendMessage handle(Update update);
+    SendMessage handle(Update update) throws UserIsNotRegisteredException;
 
     default BotCommand toApiCommand() {
         return new BotCommand(command(), description());

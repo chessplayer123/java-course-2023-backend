@@ -23,25 +23,21 @@ public class ListCommand implements Command {
     }
 
     @Override
-    public SendMessage handle(Update update) {
-        try {
-            Set<Link> links = userService.getTrackedLinks(update.message().chat().id());
-            if (links.isEmpty()) {
-                return new SendMessage(update.message().chat().id(), "You aren't tracking any links");
-            }
-
-            StringBuilder builder = new StringBuilder();
-
-            builder.append("List of tracked links:\n");
-            int i = 0;
-            for (Link link : links) {
-                builder.append(++i).append(". ").append(link.url())
-                    .append(" [Resource: ").append(link.domain()).append("]\n");
-            }
-
-            return new SendMessage(update.message().chat().id(), builder.toString());
-        } catch (UserIsNotRegisteredException e) {
-            return new SendMessage(update.message().chat().id(), "You are not registered");
+    public SendMessage handle(Update update) throws UserIsNotRegisteredException {
+        Set<Link> links = userService.getTrackedLinks(update.message().chat().id());
+        if (links.isEmpty()) {
+            return new SendMessage(update.message().chat().id(), "You aren't tracking any links");
         }
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("List of tracked links:\n");
+        int i = 0;
+        for (Link link : links) {
+            builder.append(++i).append(". ").append(link.url())
+                .append(" [Resource: ").append(link.domain()).append("]\n");
+        }
+
+        return new SendMessage(update.message().chat().id(), builder.toString());
     }
 }
