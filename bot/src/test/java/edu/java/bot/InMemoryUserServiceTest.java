@@ -3,7 +3,7 @@ package edu.java.bot;
 import edu.java.bot.user.InMemoryUserService;
 import edu.java.bot.user.UserIsNotRegisteredException;
 import edu.java.bot.user.UserService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class InMemoryUserServiceTest {

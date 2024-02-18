@@ -1,14 +1,12 @@
 package edu.java.bot;
 
 import com.pengrad.telegrambot.model.BotCommand;
-import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.commands.Command;
 import edu.java.bot.commands.StartCommand;
 import edu.java.bot.commands.UnTrackCommand;
 import edu.java.bot.processor.ChatProcessor;
 import edu.java.bot.processor.DefaultChatProcessor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
