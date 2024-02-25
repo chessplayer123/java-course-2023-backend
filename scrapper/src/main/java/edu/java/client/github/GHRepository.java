@@ -1,4 +1,4 @@
-package edu.java.client.github.repository;
+package edu.java.client.github;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.java.link.LinkInfoSupplier;
@@ -12,7 +12,7 @@ public record GHRepository(
     OffsetDateTime lastUpdated,
     @JsonProperty("html_url")
     String url
-) implements LinkInfoSupplier<GHRepository> {
+) implements LinkInfoSupplier {
     @Override
     public String getLinkSummary() {
         return "Github repository '%s' (%s). Last updated at %s.".formatted(
@@ -25,7 +25,12 @@ public record GHRepository(
     @Override
     @Nullable
     @SuppressWarnings("MultipleStringLiterals")
-    public String getDifference(GHRepository repository) {
+    public String getDifference(LinkInfoSupplier supplier) {
+        if (supplier.getClass() != GHRepository.class) {
+            return null;
+        }
+
+        GHRepository repository = (GHRepository) supplier;
         if (this.equals(repository)) {
             return null;
         }
@@ -35,19 +40,25 @@ public record GHRepository(
 
         if (!fullName.equals(repository.fullName)) {
             builder.append("\n+ Name changed: '")
-                .append(repository.fullName).append("' -> '")
-                .append(fullName).append("'");
+                .append(repository.fullName)
+                .append("' -> '")
+                .append(fullName)
+                .append("'");
         }
 
         if (!url.equals(repository.url)) {
             builder.append("\n+ Url changed: '")
-                .append(repository.url).append("' -> '")
-                .append(url).append("'");
+                .append(repository.url)
+                .append("' -> '")
+                .append(url)
+                .append("'");
         }
 
         if (!lastUpdated.equals(repository.lastUpdated)) {
-            builder.append("\n+ Content changed at ").append(lastUpdated)
-                .append(". Last change was at ").append(repository.lastUpdated);
+            builder.append("\n+ Content changed at ")
+                .append(lastUpdated)
+                .append(". Last change was at ")
+                .append(repository.lastUpdated);
         }
 
         return builder.toString();

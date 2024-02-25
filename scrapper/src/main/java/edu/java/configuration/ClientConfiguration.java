@@ -1,7 +1,7 @@
 package edu.java.configuration;
 
-import edu.java.client.github.repository.GHRepositoryClient;
-import edu.java.client.stackoverflow.question.SOQuestionClient;
+import edu.java.client.github.GithubClient;
+import edu.java.client.stackoverflow.StackOverflowClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -10,12 +10,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class ClientConfiguration {
     @Bean
-    public GHRepositoryClient githubRepositoryClient(ApplicationConfig config) {
-        return new GHRepositoryClient(config.githubUrl());
+    public GithubClient githubClient(ApplicationConfig config) {
+        return new GithubClient(config.githubUrl());
     }
 
     @Bean
-    public SOQuestionClient stackOverflowQuestionClient(ApplicationConfig config) {
-        return new SOQuestionClient(config.stackoverflowUrl());
+    public StackOverflowClient stackOverflowClient(ApplicationConfig config) {
+        return new StackOverflowClient(config.stackoverflowUrl());
     }
 }

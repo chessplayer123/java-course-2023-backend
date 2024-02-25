@@ -1,6 +1,7 @@
-package edu.java.client.stackoverflow.question;
+package edu.java.client.stackoverflow;
 
 import edu.java.client.Client;
+import edu.java.link.LinkInfoSupplier;
 import jakarta.annotation.Nullable;
 import java.net.URL;
 import java.util.regex.Matcher;
@@ -8,20 +9,20 @@ import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SOQuestionClient extends Client<SOQuestion> {
+public class StackOverflowClient extends Client {
     private static final Pattern QUESTION_URL_PATTERN = Pattern.compile("https://stackoverflow.com/questions/(\\d+).*");
 
-    public SOQuestionClient(String baseUrl) {
+    public StackOverflowClient(String baseUrl) {
         super(baseUrl);
     }
 
-    public SOQuestionClient() {
+    public StackOverflowClient() {
         super("https://api.stackexchange.com/2.3");
     }
 
     @Override
     @Nullable
-    public SOQuestion fetch(URL url) {
+    public LinkInfoSupplier fetch(URL url) {
         Matcher matcher = QUESTION_URL_PATTERN.matcher(url.toString());
         if (!matcher.matches()) {
             return null;

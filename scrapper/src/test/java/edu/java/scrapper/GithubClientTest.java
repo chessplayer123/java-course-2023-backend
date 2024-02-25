@@ -2,7 +2,7 @@ package edu.java.scrapper;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.client.Client;
-import edu.java.client.github.repository.GHRepositoryClient;
+import edu.java.client.github.GithubClient;
 import edu.java.link.LinkInfoSupplier;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,7 +15,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GitHubRepositoryClientTest {
+public class GithubClientTest {
     private static WireMockServer server;
 
     @BeforeAll
@@ -66,7 +66,7 @@ public class GitHubRepositoryClientTest {
 
     @Test
     public void obtainedSupplierReturnsExpectedSummaryForCorrectUrl() throws MalformedURLException {
-        Client client = new GHRepositoryClient(server.baseUrl());
+        Client client = new GithubClient(server.baseUrl());
         LinkInfoSupplier supplier = client.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
 
         String actualSummary = supplier.getLinkSummary();
@@ -77,7 +77,7 @@ public class GitHubRepositoryClientTest {
 
     @Test
     public void suppliersDifferenceReturnsExpectedMessage() throws MalformedURLException {
-        Client client = new GHRepositoryClient(server.baseUrl());
+        Client client = new GithubClient(server.baseUrl());
         LinkInfoSupplier prevSupplier = client.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
         LinkInfoSupplier newSupplier = client.fetch(URI.create("https://github.com/newUserName/newRepoName").toURL());
 
@@ -93,7 +93,7 @@ public class GitHubRepositoryClientTest {
 
     @Test
     public void sameSupplierReturnsNullDifference() throws MalformedURLException {
-        Client client = new GHRepositoryClient(server.baseUrl());
+        Client client = new GithubClient(server.baseUrl());
         LinkInfoSupplier supplier = client.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
 
         assertThat(supplier.getDifference(supplier)).isNull();
@@ -101,7 +101,7 @@ public class GitHubRepositoryClientTest {
 
     @Test
     public void callToInvalidUrlReturnsNullSupplier() throws MalformedURLException {
-        Client client = new GHRepositoryClient(server.baseUrl());
+        Client client = new GithubClient(server.baseUrl());
         LinkInfoSupplier supplier = client.fetch(URI.create("https://github.com/notExistentUser/notExistentRepo").toURL());
 
         assertThat(supplier).isNull();

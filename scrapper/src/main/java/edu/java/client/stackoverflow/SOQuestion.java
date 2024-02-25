@@ -1,4 +1,4 @@
-package edu.java.client.stackoverflow.question;
+package edu.java.client.stackoverflow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.java.link.LinkInfoSupplier;
@@ -9,7 +9,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
-public class SOQuestion implements LinkInfoSupplier<SOQuestion> {
+public class SOQuestion implements LinkInfoSupplier {
     private final String title;
     private final String url;
     private final OffsetDateTime lastUpdated;
@@ -37,7 +37,12 @@ public class SOQuestion implements LinkInfoSupplier<SOQuestion> {
     @Override
     @Nullable
     @SuppressWarnings("MultipleStringLiterals")
-    public String getDifference(SOQuestion question) {
+    public String getDifference(LinkInfoSupplier supplier) {
+        if (supplier.getClass() != SOQuestion.class) {
+            return null;
+        }
+
+        SOQuestion question = (SOQuestion) supplier;
         if (this.equals(question)) {
             return null;
         }
@@ -47,19 +52,25 @@ public class SOQuestion implements LinkInfoSupplier<SOQuestion> {
 
         if (!title.equals(question.title)) {
             builder.append("\n+ Title changed: '")
-                .append(question.title).append("' -> '")
-                .append(title).append("'");
+                .append(question.title)
+                .append("' -> '")
+                .append(title)
+                .append("'");
         }
 
         if (!url.equals(question.url)) {
             builder.append("\n+ Url changed: '")
-                .append(question.url).append("' -> '")
-                .append(url).append("'");
+                .append(question.url)
+                .append("' -> '")
+                .append(url)
+                .append("'");
         }
 
         if (!question.lastUpdated.isEqual(lastUpdated)) {
-            builder.append("\n+ Question content changed at").append(lastUpdated)
-                .append(". Last update at ").append(question.lastUpdated);
+            builder.append("\n+ Question content changed at")
+                .append(lastUpdated)
+                .append(". Last update at ")
+                .append(question.lastUpdated);
         }
 
         return builder.toString();

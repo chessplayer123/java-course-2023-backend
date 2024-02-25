@@ -2,8 +2,7 @@ package edu.java.scrapper;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.client.Client;
-import edu.java.client.github.repository.GHRepositoryClient;
-import edu.java.client.stackoverflow.question.SOQuestionClient;
+import edu.java.client.stackoverflow.StackOverflowClient;
 import edu.java.link.LinkInfoSupplier;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,7 +15,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StackOverflowQuestionClientTest {
+public class StackOverflowClientTest {
     private static WireMockServer server;
 
     @BeforeAll
@@ -69,7 +68,7 @@ public class StackOverflowQuestionClientTest {
 
     @Test
     public void obtainedSupplierReturnsExpectedSummaryForCorrectUrl() throws MalformedURLException {
-        Client client = new SOQuestionClient(server.baseUrl());
+        Client client = new StackOverflowClient(server.baseUrl());
         LinkInfoSupplier supplier = client.fetch(URI.create(
             "https://stackoverflow.com/questions/32126613/c-equivalent-of-rusts-resultt-e-type"
         ).toURL());
@@ -84,7 +83,7 @@ public class StackOverflowQuestionClientTest {
 
     @Test
     public void suppliersDifferenceReturnsExpectedMessage() throws MalformedURLException {
-        Client client = new SOQuestionClient(server.baseUrl());
+        Client client = new StackOverflowClient(server.baseUrl());
         LinkInfoSupplier prevSupplier = client.fetch(URI.create(
             "https://stackoverflow.com/questions/32126613/c-equivalent-of-rusts-resultt-e-type"
         ).toURL());

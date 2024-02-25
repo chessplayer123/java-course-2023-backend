@@ -7,14 +7,14 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 
-public abstract class Client<T> {
+public abstract class Client {
     private final WebClient webClient;
 
     public Client(String url) {
         webClient = WebClient.create(url);
     }
 
-    protected T sendRequest(String endpoint, Class<T> data) {
+    protected <T> T sendRequest(String endpoint, Class<T> data) {
         try {
             return webClient
                 .get()
@@ -29,7 +29,7 @@ public abstract class Client<T> {
     }
 
     @Nullable
-    public abstract LinkInfoSupplier<T> fetch(URL url);
+    public abstract LinkInfoSupplier fetch(URL url);
 
     public abstract boolean supports(URL url);
 }
