@@ -50,7 +50,7 @@ public class CommandTest extends AbstractTest {
         return new Arguments[] {
             Arguments.of(new ListCommand(userService), new BotCommand("/list", "list all subscribed links")),
             Arguments.of(new StartCommand(userService), new BotCommand("/start", "register user")),
-            Arguments.of(new TrackCommand(userService, handlerChain), new BotCommand("/track", "add new link to tracked list")),
+            Arguments.of(new TrackCommand(userService, linkProcessor), new BotCommand("/track", "add new link to tracked list")),
             Arguments.of(new UnTrackCommand(userService), new BotCommand("/untrack", "untrack link")),
         };
     }
@@ -91,7 +91,7 @@ public class CommandTest extends AbstractTest {
     @ParameterizedTest
     @MethodSource("nextUser")
     public void trackCommandShouldAddLinkToInMemoryDatabase(long userId) throws UserIsNotRegisteredException {
-        Command command = new TrackCommand(userService, handlerChain);
+        Command command = new TrackCommand(userService, linkProcessor);
 
         userService.registerUser(userId);
         Update trackUpdate = mockUpdate(userId, "/track");

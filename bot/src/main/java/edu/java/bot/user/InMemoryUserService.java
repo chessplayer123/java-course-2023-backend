@@ -3,11 +3,13 @@ package edu.java.bot.user;
 import edu.java.bot.exceptions.UserIsNotRegisteredException;
 import edu.java.bot.link.Link;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class InMemoryUserService implements UserService {
-    private final InMemoryUserRepository repository = new InMemoryUserRepository();
+    private final InMemoryUserRepository repository;
 
     @Override
     public boolean isUserRegistered(long userId) {

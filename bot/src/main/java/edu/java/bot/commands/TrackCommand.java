@@ -5,7 +5,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.exceptions.DomainIsNotSupportedException;
 import edu.java.bot.exceptions.UserIsNotRegisteredException;
 import edu.java.bot.link.Link;
-import edu.java.bot.link.LinkHandlerChain;
+import edu.java.bot.link.LinkProcessor;
 import edu.java.bot.user.UserService;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TrackCommand implements Command {
     private final UserService userService;
-    private final LinkHandlerChain handlerChain;
+    private final LinkProcessor handlerChain;
     private final Set<Long> expectedUsers = new HashSet<>();
 
     @Override

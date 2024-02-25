@@ -2,10 +2,8 @@ package edu.java.bot;
 
 import edu.java.bot.exceptions.DomainIsNotSupportedException;
 import edu.java.bot.link.GithubLinkHandler;
-import edu.java.bot.link.LinkHandlerChain;
-import edu.java.bot.link.StackOverflowLinkHandler;
+import edu.java.bot.link.LinkProcessor;
 import org.junit.jupiter.api.Test;
-import java.util.List;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -13,24 +11,14 @@ public class LinkHandlerTest extends AbstractTest {
     @Test
     public void linkHandlerChainShouldTraverseAllHandlers() {
         assertThatCode(() -> {
-            handlerChain.getDomain("https://github.com");
-            handlerChain.getDomain("https://stackoverflow.com");
+            linkProcessor.getDomain("https://github.com");
+            linkProcessor.getDomain("https://stackoverflow.com");
         }).doesNotThrowAnyException();
     }
 
     @Test
-    public void githubLinkHandlerThrowsExceptionOnUnexpectedUrl() {
-        LinkHandlerChain linkHandlerChain = new LinkHandlerChain(new GithubLinkHandler());
-
-        assertThatThrownBy(() -> linkHandlerChain.getDomain("https://stackoverflow.com"))
-            .isInstanceOf(DomainIsNotSupportedException.class);
-    }
-
-    @Test
-    public void stackOverFlowLinkHandlerThrowsExceptionOnUnexpectedUrl() {
-        LinkHandlerChain linkHandlerChain = new LinkHandlerChain(new StackOverflowLinkHandler());
-
-        assertThatThrownBy(() -> linkHandlerChain.getDomain("https://github.com"))
+    public void hanThrowsExceptionOnUnexpectedUrl() {
+        assertThatThrownBy(() -> linkProcessor.getDomain("https://foo.bar"))
             .isInstanceOf(DomainIsNotSupportedException.class);
     }
 }
