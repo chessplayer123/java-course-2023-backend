@@ -1,11 +1,12 @@
 package edu.java.client.github;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.java.exceptions.DifferenceIsNotSupportedException;
 import edu.java.link.LinkInfoSupplier;
 import jakarta.annotation.Nullable;
 import java.time.OffsetDateTime;
 
-public record GHRepository(
+public record GithubRepository(
     @JsonProperty("full_name")
     String fullName,
     @JsonProperty("updated_at")
@@ -24,13 +25,12 @@ public record GHRepository(
 
     @Override
     @Nullable
-    @SuppressWarnings("MultipleStringLiterals")
-    public String getDifference(LinkInfoSupplier supplier) {
-        if (supplier.getClass() != GHRepository.class) {
-            return null;
+    public String getDifference(LinkInfoSupplier supplier) throws DifferenceIsNotSupportedException {
+        if (supplier.getClass() != GithubRepository.class) {
+            throw new DifferenceIsNotSupportedException();
         }
 
-        GHRepository repository = (GHRepository) supplier;
+        GithubRepository repository = (GithubRepository) supplier;
         if (this.equals(repository)) {
             return null;
         }
@@ -39,26 +39,18 @@ public record GHRepository(
         builder.append("Repository changes:");
 
         if (!fullName.equals(repository.fullName)) {
-            builder.append("\n+ Name changed: '")
-                .append(repository.fullName)
-                .append("' -> '")
-                .append(fullName)
-                .append("'");
+            builder.append("\n+ Name changed: '%s' -> '%s'".formatted(repository.fullName, fullName));
         }
 
         if (!url.equals(repository.url)) {
-            builder.append("\n+ Url changed: '")
-                .append(repository.url)
-                .append("' -> '")
-                .append(url)
-                .append("'");
+            builder.append("\n+ Url changed: '%s' -> '%s'".formatted(repository.url, url));
         }
 
         if (!lastUpdated.equals(repository.lastUpdated)) {
-            builder.append("\n+ Content changed at ")
-                .append(lastUpdated)
-                .append(". Last change was at ")
-                .append(repository.lastUpdated);
+            builder.append("\n+ Content changed at %s. Last change was at %s".formatted(
+                lastUpdated,
+                repository.lastUpdated
+            ));
         }
 
         return builder.toString();

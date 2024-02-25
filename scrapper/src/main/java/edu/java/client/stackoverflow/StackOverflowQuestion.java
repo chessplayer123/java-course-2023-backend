@@ -1,6 +1,7 @@
 package edu.java.client.stackoverflow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.java.exceptions.DifferenceIsNotSupportedException;
 import edu.java.link.LinkInfoSupplier;
 import jakarta.annotation.Nullable;
 import java.time.Instant;
@@ -9,12 +10,12 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
-public class SOQuestion implements LinkInfoSupplier {
+public class StackOverflowQuestion implements LinkInfoSupplier {
     private final String title;
     private final String url;
     private final OffsetDateTime lastUpdated;
 
-    public SOQuestion(
+    public StackOverflowQuestion(
         @JsonProperty("items")
         List<Map<String, Object>> items
     ) {
@@ -36,13 +37,12 @@ public class SOQuestion implements LinkInfoSupplier {
 
     @Override
     @Nullable
-    @SuppressWarnings("MultipleStringLiterals")
-    public String getDifference(LinkInfoSupplier supplier) {
-        if (supplier.getClass() != SOQuestion.class) {
-            return null;
+    public String getDifference(LinkInfoSupplier supplier) throws DifferenceIsNotSupportedException {
+        if (supplier.getClass() != StackOverflowQuestion.class) {
+            throw new DifferenceIsNotSupportedException();
         }
 
-        SOQuestion question = (SOQuestion) supplier;
+        StackOverflowQuestion question = (StackOverflowQuestion) supplier;
         if (this.equals(question)) {
             return null;
         }
@@ -51,26 +51,18 @@ public class SOQuestion implements LinkInfoSupplier {
         builder.append("StackOverflow questions changes:");
 
         if (!title.equals(question.title)) {
-            builder.append("\n+ Title changed: '")
-                .append(question.title)
-                .append("' -> '")
-                .append(title)
-                .append("'");
+            builder.append("\n+ Title changed: '%s' -> '%s'".formatted(question.title, title));
         }
 
         if (!url.equals(question.url)) {
-            builder.append("\n+ Url changed: '")
-                .append(question.url)
-                .append("' -> '")
-                .append(url)
-                .append("'");
+            builder.append("\n+ Url changed: '%s' -> '%s'".formatted(question.url, url));
         }
 
         if (!question.lastUpdated.isEqual(lastUpdated)) {
-            builder.append("\n+ Question content changed at")
-                .append(lastUpdated)
-                .append(". Last update at ")
-                .append(question.lastUpdated);
+            builder.append("\n+ Question content changed at %s. Last change was at %s".formatted(
+                lastUpdated,
+                question.lastUpdated
+            ));
         }
 
         return builder.toString();
