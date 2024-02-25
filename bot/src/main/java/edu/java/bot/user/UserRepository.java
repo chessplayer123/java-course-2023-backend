@@ -7,10 +7,6 @@ public interface UserRepository {
 
     User get(long userId);
 
-    default User getOrDefault(long userId, User defaultUser) {
-        return contains(userId) ? get(userId) : defaultUser;
-    }
-
     default <E extends Exception> User getOrThrow(long userId, E exception) throws E {
         if (!contains(userId)) {
             throw exception;

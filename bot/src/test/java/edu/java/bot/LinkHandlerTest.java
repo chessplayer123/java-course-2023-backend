@@ -9,17 +9,12 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class LinkHandlerTest {
+public class LinkHandlerTest extends AbstractTest {
     @Test
     public void linkHandlerChainShouldTraverseAllHandlers() {
-        LinkHandlerChain linkHandler = new LinkHandlerChain(
-            new GithubLinkHandler(),
-            new StackOverflowLinkHandler()
-        );
-
         assertThatCode(() -> {
-            linkHandler.getDomain("https://github.com");
-            linkHandler.getDomain("https://stackoverflow.com");
+            handlerChain.getDomain("https://github.com");
+            handlerChain.getDomain("https://stackoverflow.com");
         }).doesNotThrowAnyException();
     }
 
