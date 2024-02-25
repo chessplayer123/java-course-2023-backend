@@ -1,41 +1,51 @@
 package edu.java.bot.base;
 
-import edu.java.bot.commands.ListCommand;
-import edu.java.bot.commands.StartCommand;
-import edu.java.bot.commands.TrackCommand;
-import edu.java.bot.commands.UnTrackCommand;
-import edu.java.bot.link.GithubLinkHandler;
-import edu.java.bot.link.LinkHandler;
-import edu.java.bot.link.StackOverflowLinkHandler;
-import edu.java.bot.processor.DefaultChatProcessor;
-import edu.java.bot.user.InMemoryUserService;
-import edu.java.bot.user.UserService;
+import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.SetMyCommands;
+import com.pengrad.telegrambot.response.SendResponse;
+import edu.java.bot.processor.ChatProcessor;
 import jakarta.annotation.PostConstruct;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LinkTrackerBot extends Bot {
-    public LinkTrackerBot(String token) {
-        super(token, new DefaultChatProcessor());
-    }
+@Log4j2
+@RequiredArgsConstructor
+public class LinkTrackerBot implements Bot {
+    private final TelegramBot telegramBot;
+    private final ChatProcessor chatProcessor;
 
-    @PostConstruct
     @Override
-    protected void setup() {
-        UserService userService = new InMemoryUserService();
-
-        LinkHandler linkHandler = LinkHandler.newChain()
-            .addHandler(new GithubLinkHandler())
-            .addHandler(new StackOverflowLinkHandler());
-
-        chatProcessor
-            .addCommand(new ListCommand(userService))
-            .addCommand(new StartCommand(userService))
-            .addCommand(new TrackCommand(userService, linkHandler))
-            .addCommand(new UnTrackCommand(userService))
-            .buildHelpCommand("This bot is designed to track added links.\nHere's the list of available commands:");
-
-        start();
+    public int handleUpdates(List<Update> updates) {
+        for (Update update : updates) {
+            SendResponse response = telegramBot.execute(chatProcessor.process(update));
+            if (!response.isOk()) {
+                log.warn(
+                    "Error occurred [code=%d], while trying to process '%s'"
+                        .formatted(response.errorCode(), update.message().text())
+                );
+            }
+        }
+        return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
+    @Override
+    @PostConstruct
+    public void start() {
+        telegramBot.execute(new SetMyCommands(chatProcessor.getBotCommands()));
+        telegramBot.setUpdatesListener(this::handleUpdates);
+
+        log.info("Bot was successfully started");
+    }
+
+    @Override
+    public void close() {
+        telegramBot.shutdown();
+
+        log.info("Bot was successfully stopped");
+    }
 }

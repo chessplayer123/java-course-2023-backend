@@ -1,17 +1,19 @@
 package edu.java.bot.link;
 
 import java.util.regex.Pattern;
+import org.springframework.stereotype.Component;
 
-public class StackOverflowLinkHandler extends LinkHandler {
+@Component
+public class StackOverflowLinkHandler implements LinkHandler {
     private static final Pattern STACKOVERFLOW_URL_PATTERN = Pattern.compile(".*stackoverflow\\.com.*");
 
     @Override
-    protected boolean parseUrl(String url) {
+    public boolean supports(String url) {
         return STACKOVERFLOW_URL_PATTERN.matcher(url).matches();
     }
 
     @Override
-    protected String getDomain() {
+    public String getDomain() {
         return "stackoverflow.com";
     }
 }

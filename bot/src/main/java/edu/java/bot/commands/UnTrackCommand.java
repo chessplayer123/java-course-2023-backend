@@ -4,14 +4,16 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.exceptions.UserIsNotRegisteredException;
 import edu.java.bot.link.Link;
-import edu.java.bot.user.UserIsNotRegisteredException;
 import edu.java.bot.user.UserService;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
+@Component
 public class UnTrackCommand implements Command {
     private static final String URL_DOMAIN_SEPARATOR = ";;";
 
@@ -39,10 +41,10 @@ public class UnTrackCommand implements Command {
     public SendMessage handleCallback(Update update) throws UserIsNotRegisteredException {
         long userId = update.callbackQuery().from().id();
         String[] linkDomain = update.callbackQuery().data().split(URL_DOMAIN_SEPARATOR);
-        boolean isUntracked = userService.unTrackLink(userId, new Link(linkDomain[0], linkDomain[1]));
+        userService.unTrackLink(userId, new Link(linkDomain[0], linkDomain[1]));
         return new SendMessage(
             userId,
-            isUntracked ? "Link was successfully untracked" : "Link was not tracked"
+            "Link was successfully untracked"
         );
     }
 

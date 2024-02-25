@@ -14,8 +14,9 @@ import edu.java.bot.commands.UnTrackCommand;
 import edu.java.bot.link.GithubLinkHandler;
 import edu.java.bot.link.Link;
 import edu.java.bot.link.LinkHandler;
+import edu.java.bot.link.LinkHandlerChain;
 import edu.java.bot.user.InMemoryUserService;
-import edu.java.bot.user.UserIsNotRegisteredException;
+import edu.java.bot.exceptions.UserIsNotRegisteredException;
 import edu.java.bot.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,7 +45,7 @@ public class CommandTest {
         return new Arguments[] {
             Arguments.of(new ListCommand(null), new BotCommand("/list", "list all subscribed links")),
             Arguments.of(new StartCommand(null), new BotCommand("/start", "register user")),
-            Arguments.of(new TrackCommand(null, null), new BotCommand("/track", "add new tracked link")),
+            Arguments.of(new TrackCommand(null, null), new BotCommand("/track", "add new link to tracked list")),
             Arguments.of(new UnTrackCommand(null), new BotCommand("/untrack", "untrack link")),
         };
     }
@@ -85,8 +86,8 @@ public class CommandTest {
     @Test
     public void trackCommandShouldAddLinkToInMemoryDatabase() throws UserIsNotRegisteredException {
         UserService userService = new InMemoryUserService();
-        LinkHandler linkHandler = new GithubLinkHandler();
-        Command command = new TrackCommand(userService, linkHandler);
+        LinkHandlerChain chain = new LinkHandlerChain(new GithubLinkHandler());
+        Command command = new TrackCommand(userService, chain);
 
         userService.registerUser(6L);
         Update trackUpdate = mockUpdate(6L, "/track");

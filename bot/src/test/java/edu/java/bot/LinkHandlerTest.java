@@ -1,19 +1,21 @@
 package edu.java.bot;
 
-import edu.java.bot.link.DomainIsNotSupportedException;
+import edu.java.bot.exceptions.DomainIsNotSupportedException;
 import edu.java.bot.link.GithubLinkHandler;
-import edu.java.bot.link.LinkHandler;
+import edu.java.bot.link.LinkHandlerChain;
 import edu.java.bot.link.StackOverflowLinkHandler;
 import org.junit.jupiter.api.Test;
+import java.util.List;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class LinkHandlerTest {
     @Test
     public void linkHandlerChainShouldTraverseAllHandlers() {
-        LinkHandler linkHandler = LinkHandler.newChain()
-            .addHandler(new GithubLinkHandler())
-            .addHandler(new StackOverflowLinkHandler());
+        LinkHandlerChain linkHandler = new LinkHandlerChain(
+            new GithubLinkHandler(),
+            new StackOverflowLinkHandler()
+        );
 
         assertThatCode(() -> {
             linkHandler.getDomain("https://github.com");
@@ -23,17 +25,17 @@ public class LinkHandlerTest {
 
     @Test
     public void githubLinkHandlerThrowsExceptionOnUnexpectedUrl() {
-        LinkHandler linkHandler = new GithubLinkHandler();
+        LinkHandlerChain linkHandlerChain = new LinkHandlerChain(new GithubLinkHandler());
 
-        assertThatThrownBy(() -> linkHandler.getDomain("https://stackoverflow.com"))
+        assertThatThrownBy(() -> linkHandlerChain.getDomain("https://stackoverflow.com"))
             .isInstanceOf(DomainIsNotSupportedException.class);
     }
 
     @Test
     public void stackOverFlowLinkHandlerThrowsExceptionOnUnexpectedUrl() {
-        LinkHandler linkHandler = new StackOverflowLinkHandler();
+        LinkHandlerChain linkHandlerChain = new LinkHandlerChain(new StackOverflowLinkHandler());
 
-        assertThatThrownBy(() -> linkHandler.getDomain("https://github.com"))
+        assertThatThrownBy(() -> linkHandlerChain.getDomain("https://github.com"))
             .isInstanceOf(DomainIsNotSupportedException.class);
     }
 }

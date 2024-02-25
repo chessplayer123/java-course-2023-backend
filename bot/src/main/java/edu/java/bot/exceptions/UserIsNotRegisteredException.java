@@ -1,4 +1,4 @@
-package edu.java.bot.user;
+package edu.java.bot.exceptions;
 
 public class UserIsNotRegisteredException extends Exception {
 }

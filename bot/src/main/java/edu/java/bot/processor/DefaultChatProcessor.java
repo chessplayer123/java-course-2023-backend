@@ -4,18 +4,15 @@ import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.commands.Command;
-import edu.java.bot.user.UserIsNotRegisteredException;
-import java.util.ArrayList;
+import edu.java.bot.exceptions.UserIsNotRegisteredException;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
+@Service
 public class DefaultChatProcessor implements ChatProcessor {
-    private final List<Command> commands = new ArrayList<>();
-
-    @Override
-    public ChatProcessor addCommand(Command command) {
-        commands.add(command);
-        return this;
-    }
+    private final List<Command> commands;
 
     @Override
     public SendMessage process(Update update) {
