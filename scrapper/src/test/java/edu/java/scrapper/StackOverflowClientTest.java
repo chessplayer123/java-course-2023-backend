@@ -2,6 +2,7 @@ package edu.java.scrapper;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.client.Client;
+import edu.java.client.stackoverflow.StackOverflowClient;
 import edu.java.client.stackoverflow.StackOverflowQuestionSubClient;
 import edu.java.link.LinkInfoSupplier;
 import lombok.SneakyThrows;
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class StackOverflowClientTest {
     private static WireMockServer server;
-    private static Client stackOverflowClient;
+    private static StackOverflowClient stackOverflowClient;
 
     @BeforeAll
     public static void constructWireMockServer() {
@@ -62,7 +63,7 @@ public class StackOverflowClientTest {
 
         server.start();
 
-        stackOverflowClient = new Client(server.baseUrl(), List.of(new StackOverflowQuestionSubClient()));
+        stackOverflowClient = new StackOverflowClient(server.baseUrl(), List.of(new StackOverflowQuestionSubClient()));
     }
 
     @AfterAll

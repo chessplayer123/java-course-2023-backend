@@ -2,6 +2,7 @@ package edu.java.scrapper;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.client.Client;
+import edu.java.client.github.GithubClient;
 import edu.java.client.github.GithubRepositorySubClient;
 import edu.java.link.LinkInfoSupplier;
 import lombok.SneakyThrows;
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class GithubClientTest {
     private static WireMockServer server;
-    private static Client githubClient;
+    private static GithubClient githubClient;
 
     @BeforeAll
     public static void constructWireMockServer() {
@@ -60,7 +61,7 @@ public class GithubClientTest {
 
         server.start();
 
-        githubClient = new Client(server.baseUrl(), List.of(new GithubRepositorySubClient()));
+        githubClient = new GithubClient(server.baseUrl(), List.of(new GithubRepositorySubClient()));
     }
 
     @AfterAll

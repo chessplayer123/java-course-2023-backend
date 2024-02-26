@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Log4j2
 public class LinkUpdaterScheduler {
-    @Scheduled(fixedDelayString = "#{@'app-edu.java.configuration.ApplicationConfig'.scheduler.interval}")
+    @Scheduled(fixedDelayString = "#{@schedulerInterval}")
     void update() {
         log.info("Update method called");
     }
