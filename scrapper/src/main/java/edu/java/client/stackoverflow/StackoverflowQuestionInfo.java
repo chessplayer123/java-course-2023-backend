@@ -10,12 +10,12 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
-public class StackOverflowQuestion implements LinkInfoSupplier {
+public class StackoverflowQuestionInfo implements LinkInfoSupplier {
     private final String title;
     private final String url;
     private final OffsetDateTime lastUpdated;
 
-    public StackOverflowQuestion(
+    public StackoverflowQuestionInfo(
         @JsonProperty("items")
         List<Map<String, Object>> items
     ) {
@@ -38,11 +38,11 @@ public class StackOverflowQuestion implements LinkInfoSupplier {
     @Override
     @Nullable
     public String getDifference(LinkInfoSupplier supplier) throws DifferenceIsNotSupportedException {
-        if (supplier.getClass() != StackOverflowQuestion.class) {
+        if (supplier.getClass() != StackoverflowQuestionInfo.class) {
             throw new DifferenceIsNotSupportedException();
         }
 
-        StackOverflowQuestion question = (StackOverflowQuestion) supplier;
+        StackoverflowQuestionInfo question = (StackoverflowQuestionInfo) supplier;
         if (this.equals(question)) {
             return null;
         }
@@ -66,5 +66,21 @@ public class StackOverflowQuestion implements LinkInfoSupplier {
         }
 
         return builder.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return title.hashCode() + url.hashCode() + lastUpdated.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        } else if (o.getClass() != StackoverflowQuestionInfo.class) {
+            return false;
+        }
+        StackoverflowQuestionInfo otherInfo = (StackoverflowQuestionInfo) o;
+        return title.equals(otherInfo.title) && url.equals(otherInfo.url) && lastUpdated.equals(otherInfo.lastUpdated);
     }
 }

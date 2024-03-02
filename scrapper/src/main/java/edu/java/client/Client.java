@@ -10,14 +10,14 @@ import org.springframework.web.reactive.function.client.WebClientException;
 
 public class Client {
     private final WebClient webClient;
-    private final List<SubClient> subClients;
+    private final List<? extends SubClient> subClients;
 
-    public Client(String url, List<SubClient> subClients) {
+    public Client(String url, List<? extends SubClient> subClients) {
         webClient = WebClient.create(url);
         this.subClients = subClients;
     }
 
-    protected <T> T sendRequest(String endpoint, Class<T> data) {
+    private <T> T sendRequest(String endpoint, Class<T> data) {
         try {
             return webClient
                 .get()
@@ -38,15 +38,10 @@ public class Client {
                 continue;
             }
             return sendRequest(
-                subClient.getApiPath(url),
+                subClient.convertUrlToApiPath(url),
                 subClient.getInfoSupplierType()
             );
         }
         return null;
-    }
-
-    public boolean supports(URL url) {
-        return subClients.stream()
-            .anyMatch(subClient -> subClient.supports(url));
     }
 }

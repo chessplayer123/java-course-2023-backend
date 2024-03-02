@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public interface SubClient {
     Pattern getUrlPattern();
 
-    String getApiPath(URL url);
+    String convertUrlToApiPath(URL url);
 
     Class<? extends LinkInfoSupplier> getInfoSupplierType();
 

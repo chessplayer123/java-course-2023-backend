@@ -6,7 +6,7 @@ import edu.java.link.LinkInfoSupplier;
 import jakarta.annotation.Nullable;
 import java.time.OffsetDateTime;
 
-public record GithubRepository(
+public record GithubRepositoryInfo(
     @JsonProperty("full_name")
     String fullName,
     @JsonProperty("updated_at")
@@ -26,11 +26,11 @@ public record GithubRepository(
     @Override
     @Nullable
     public String getDifference(LinkInfoSupplier supplier) throws DifferenceIsNotSupportedException {
-        if (supplier.getClass() != GithubRepository.class) {
+        if (supplier.getClass() != GithubRepositoryInfo.class) {
             throw new DifferenceIsNotSupportedException();
         }
 
-        GithubRepository repository = (GithubRepository) supplier;
+        GithubRepositoryInfo repository = (GithubRepositoryInfo) supplier;
         if (this.equals(repository)) {
             return null;
         }
