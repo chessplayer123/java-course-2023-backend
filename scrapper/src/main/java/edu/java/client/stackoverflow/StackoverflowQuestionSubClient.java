@@ -1,5 +1,6 @@
 package edu.java.client.stackoverflow;
 
+import edu.java.link.LinkInfoSupplier;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,5 +23,10 @@ public class StackoverflowQuestionSubClient implements StackoverflowClient.SubCl
         }
         String questionId = matcher.group(1);
         return "/questions/%s?site=stackoverflow".formatted(questionId);
+    }
+
+    @Override
+    public Class<? extends LinkInfoSupplier> getInfoSupplierType() {
+        return StackoverflowQuestionInfo.class;
     }
 }
