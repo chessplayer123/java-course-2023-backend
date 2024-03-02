@@ -7,11 +7,11 @@ import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StackoverflowQuestionSubClient implements StackoverflowClient.SubClient {
+public class StackoverflowQuestionSubClient extends StackoverflowSubClient {
     private static final Pattern QUESTION_URL_PATTERN = Pattern.compile("https://stackoverflow.com/questions/(\\d+).*");
 
     @Override
-    public Pattern getUrlPattern() {
+    protected Pattern getUrlPattern() {
         return QUESTION_URL_PATTERN;
     }
 

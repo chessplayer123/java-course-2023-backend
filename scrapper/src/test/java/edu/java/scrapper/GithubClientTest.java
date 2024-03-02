@@ -5,6 +5,8 @@ import edu.java.client.github.GithubClient;
 import edu.java.client.github.GithubRepositorySubClient;
 import edu.java.link.LinkInfoSupplier;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import java.net.URI;
 import java.util.List;
@@ -15,10 +17,22 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GithubClientTest extends AbstractTest {
+    private static final WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
+    private final GithubClient githubClient = new GithubClient(server.baseUrl(), List.of(new GithubRepositorySubClient()));
+
+    @BeforeAll
+    public static void startServer() {
+        server.start();
+    }
+
+    @AfterAll
+    public static void stopServer() {
+        server.stop();
+    }
+
     @Test
     @SneakyThrows
     public void obtainedSupplierReturnsExpectedSummaryForCorrectUrl() {
-        WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
         server.stubFor(get(urlPathMatching("/repos/chessplayer123/java-course-2023-backend"))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -26,8 +40,7 @@ public class GithubClientTest extends AbstractTest {
                 .withBody(jsonToString("src/test/resources/github-response1.json"))
             )
         );
-        server.start();
-        var githubClient = new GithubClient(server.baseUrl(), List.of(new GithubRepositorySubClient()));
+
         LinkInfoSupplier supplier = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
 
         String actualSummary = supplier.getLinkSummary();
@@ -39,7 +52,6 @@ public class GithubClientTest extends AbstractTest {
     @Test
     @SneakyThrows
     public void suppliersDifferenceReturnsExpectedMessage() {
-        WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
         server.stubFor(get(urlPathMatching("/repos/chessplayer123/java-course-2023-backend"))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -54,8 +66,6 @@ public class GithubClientTest extends AbstractTest {
                 .withBody(jsonToString("src/test/resources/github-response2.json"))
             )
         );
-        server.start();
-        var githubClient = new GithubClient(server.baseUrl(), List.of(new GithubRepositorySubClient()));
 
         LinkInfoSupplier prevSupplier = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
         LinkInfoSupplier newSupplier = githubClient.fetch(URI.create("https://github.com/newUserName/newRepoName").toURL());
@@ -73,7 +83,6 @@ public class GithubClientTest extends AbstractTest {
     @Test
     @SneakyThrows
     public void sameSupplierReturnsNullDifference() {
-        WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
         server.stubFor(get(urlPathMatching("/repos/chessplayer123/java-course-2023-backend"))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -81,8 +90,6 @@ public class GithubClientTest extends AbstractTest {
                 .withBody(jsonToString("src/test/resources/github-response1.json"))
             )
         );
-        server.start();
-        var githubClient = new GithubClient(server.baseUrl(), List.of(new GithubRepositorySubClient()));
 
         LinkInfoSupplier supplier = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
 
@@ -92,14 +99,11 @@ public class GithubClientTest extends AbstractTest {
     @Test
     @SneakyThrows
     public void callToInvalidUrlReturnsNullSupplier() {
-        WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
         server.stubFor(get(urlPathMatching("/repos/notExistentUser/notExistentRepo"))
             .willReturn(aResponse()
                 .withStatus(404)
             )
         );
-        server.start();
-        var githubClient = new GithubClient(server.baseUrl(), List.of(new GithubRepositorySubClient()));
 
         LinkInfoSupplier supplier = githubClient.fetch(URI.create("https://github.com/notExistentUser/notExistentRepo").toURL());
 

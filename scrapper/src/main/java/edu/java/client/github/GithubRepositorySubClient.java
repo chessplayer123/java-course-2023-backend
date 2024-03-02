@@ -6,11 +6,11 @@ import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GithubRepositorySubClient implements GithubClient.SubClient {
+public class GithubRepositorySubClient extends GithubSubClient {
     private static final Pattern REPOSITORY_URL_PATTERN = Pattern.compile("https://github.com/.+/.+");
 
     @Override
-    public Pattern getUrlPattern() {
+    protected Pattern getUrlPattern() {
         return REPOSITORY_URL_PATTERN;
     }
 

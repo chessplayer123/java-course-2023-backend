@@ -4,14 +4,14 @@ import edu.java.link.LinkInfoSupplier;
 import java.net.URL;
 import java.util.regex.Pattern;
 
-public interface SubClient {
-    Pattern getUrlPattern();
+public abstract class SubClient {
+    protected abstract Pattern getUrlPattern();
 
-    String convertUrlToApiPath(URL url);
+    public abstract String convertUrlToApiPath(URL url);
 
-    Class<? extends LinkInfoSupplier> getInfoSupplierType();
+    public abstract Class<? extends LinkInfoSupplier> getInfoSupplierType();
 
-    default boolean supports(URL url) {
+    public boolean supports(URL url) {
         return getUrlPattern().matcher(url.toString()).matches();
     }
 }

@@ -1,10 +1,14 @@
 package edu.java.scrapper;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import edu.java.client.github.GithubClient;
+import edu.java.client.github.GithubRepositorySubClient;
 import edu.java.client.stackoverflow.StackoverflowClient;
 import edu.java.client.stackoverflow.StackoverflowQuestionSubClient;
 import edu.java.link.LinkInfoSupplier;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import java.net.URI;
 import java.util.List;
@@ -15,10 +19,22 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StackoverflowClientTest extends AbstractTest {
+    private static final WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
+    private final StackoverflowClient stackoverflowClient = new StackoverflowClient(server.baseUrl(), List.of(new StackoverflowQuestionSubClient()));
+
+    @BeforeAll
+    public static void startServer() {
+        server.start();
+    }
+
+    @AfterAll
+    public static void stopServer() {
+        server.stop();
+    }
+
     @Test
     @SneakyThrows
     public void obtainedSupplierReturnsExpectedSummaryForCorrectUrl() {
-        WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
         server.stubFor(get(urlPathMatching("/questions/32126613"))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -26,10 +42,8 @@ public class StackoverflowClientTest extends AbstractTest {
                 .withBody(jsonToString("src/test/resources/stackoverflow-response1.json"))
             )
         );
-        server.start();
-        StackoverflowClient stackOverflowClient = new StackoverflowClient(server.baseUrl(), List.of(new StackoverflowQuestionSubClient()));
 
-        LinkInfoSupplier supplier = stackOverflowClient.fetch(URI.create(
+        LinkInfoSupplier supplier = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/32126613/c-equivalent-of-rusts-resultt-e-type"
         ).toURL());
 
@@ -44,7 +58,6 @@ public class StackoverflowClientTest extends AbstractTest {
     @Test
     @SneakyThrows
     public void suppliersDifferenceReturnsExpectedMessage() {
-        WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
         server.stubFor(get(urlPathMatching("/questions/32126613"))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -59,13 +72,11 @@ public class StackoverflowClientTest extends AbstractTest {
                 .withBody(jsonToString("src/test/resources/stackoverflow-response2.json"))
             )
         );
-        server.start();
-        StackoverflowClient stackOverflowClient = new StackoverflowClient(server.baseUrl(), List.of(new StackoverflowQuestionSubClient()));
 
-        LinkInfoSupplier prevSupplier = stackOverflowClient.fetch(URI.create(
+        LinkInfoSupplier prevSupplier = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/32126613/c-equivalent-of-rusts-resultt-e-type"
         ).toURL());
-        LinkInfoSupplier newSupplier = stackOverflowClient.fetch(URI.create(
+        LinkInfoSupplier newSupplier = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/56016409/how-to-exclude-certain-classes-from-being-included-in-the-code-coverage-java"
         ).toURL());
 
