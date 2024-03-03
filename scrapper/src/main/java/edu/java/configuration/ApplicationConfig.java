@@ -16,6 +16,10 @@ public record ApplicationConfig(
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
     }
 
-    public record ClientApi(@NotNull String githubUrl, @NotNull String stackoverflowUrl) {
+    public record ClientApi(
+        @NotNull String githubUrl,
+        @NotNull String stackoverflowUrl,
+        @NotNull String botUrl
+    ) {
     }
 }

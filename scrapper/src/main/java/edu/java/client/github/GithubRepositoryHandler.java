@@ -1,12 +1,12 @@
 package edu.java.client.github;
 
-import edu.java.link.LinkInfoSupplier;
+import edu.java.response.Response;
 import java.net.URL;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GithubRepositorySubClient extends GithubSubClient {
+public class GithubRepositoryHandler extends GithubLinkHandler {
     private static final Pattern REPOSITORY_URL_PATTERN = Pattern.compile("https://github.com/.+/.+");
 
     @Override
@@ -15,13 +15,12 @@ public class GithubRepositorySubClient extends GithubSubClient {
     }
 
     @Override
-    public String convertUrlToApiPath(URL url) {
-        return supports(url) ? "/repos/%s".formatted(url.getPath()) : null;
+    public Class<? extends Response> getResponseType() {
+        return GithubRepositoryResponse.class;
     }
 
     @Override
-    public Class<? extends LinkInfoSupplier> getInfoSupplierType() {
-        return GithubRepositoryInfo.class;
+    public String convertUrlToApiPath(URL url) {
+        return "/repos/%s".formatted(url.getPath());
     }
-
 }

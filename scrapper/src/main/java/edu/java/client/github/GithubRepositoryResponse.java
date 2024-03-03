@@ -1,21 +1,19 @@
 package edu.java.client.github;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import edu.java.exceptions.DifferenceIsNotSupportedException;
-import edu.java.link.LinkInfoSupplier;
-import jakarta.annotation.Nullable;
+import edu.java.response.Response;
 import java.time.OffsetDateTime;
 
-public record GithubRepositoryInfo(
+public record GithubRepositoryResponse(
     @JsonProperty("full_name")
     String fullName,
     @JsonProperty("updated_at")
     OffsetDateTime lastUpdated,
     @JsonProperty("html_url")
     String url
-) implements LinkInfoSupplier {
+) implements Response {
     @Override
-    public String getLinkSummary() {
+    public String getSummary() {
         return "Github repository '%s' (%s). Last updated at %s.".formatted(
             fullName,
             url,
@@ -24,13 +22,12 @@ public record GithubRepositoryInfo(
     }
 
     @Override
-    @Nullable
-    public String getDifference(LinkInfoSupplier supplier) throws DifferenceIsNotSupportedException {
-        if (supplier.getClass() != GithubRepositoryInfo.class) {
-            throw new DifferenceIsNotSupportedException();
+    public String getDifference(Response supplier) throws IllegalArgumentException {
+        if (supplier.getClass() != getClass()) {
+            throw new IllegalArgumentException();
         }
 
-        GithubRepositoryInfo repository = (GithubRepositoryInfo) supplier;
+        GithubRepositoryResponse repository = (GithubRepositoryResponse) supplier;
         if (this.equals(repository)) {
             return null;
         }

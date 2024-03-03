@@ -2,8 +2,8 @@ package edu.java.scrapper;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.client.github.GithubClient;
-import edu.java.client.github.GithubRepositorySubClient;
-import edu.java.link.LinkInfoSupplier;
+import edu.java.client.github.GithubRepositoryHandler;
+import edu.java.response.Response;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class GithubClientTest extends AbstractTest {
     private static final WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
-    private final GithubClient githubClient = new GithubClient(server.baseUrl(), List.of(new GithubRepositorySubClient()));
+    private final GithubClient githubClient = new GithubClient(server.baseUrl(), List.of(new GithubRepositoryHandler()));
 
     @BeforeAll
     public static void startServer() {
@@ -41,9 +41,9 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        LinkInfoSupplier supplier = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
+        Response response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
 
-        String actualSummary = supplier.getLinkSummary();
+        String actualSummary = response.getSummary();
         String expectedSummary = "Github repository 'chessplayer123/java-course-2023-backend' (https://github.com/chessplayer123/java-course-2023-backend). Last updated at 2023-10-14T11:23:44Z.";
 
         assertThat(actualSummary).isEqualTo(expectedSummary);
@@ -67,10 +67,10 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        LinkInfoSupplier prevSupplier = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
-        LinkInfoSupplier newSupplier = githubClient.fetch(URI.create("https://github.com/newUserName/newRepoName").toURL());
+        Response prevResponse = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
+        Response newResponse = githubClient.fetch(URI.create("https://github.com/newUserName/newRepoName").toURL());
 
-        String actualDifference = newSupplier.getDifference(prevSupplier);
+        String actualDifference = newResponse.getDifference(prevResponse);
         String expectedDifference = """
             Repository changes:
             + Name changed: 'chessplayer123/java-course-2023-backend' -> 'newUserName/newRepoName'
@@ -91,9 +91,9 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        LinkInfoSupplier supplier = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
+        Response response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
 
-        assertThat(supplier.getDifference(supplier)).isNull();
+        assertThat(response.getDifference(response)).isNull();
     }
 
     @Test
@@ -105,8 +105,8 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        LinkInfoSupplier supplier = githubClient.fetch(URI.create("https://github.com/notExistentUser/notExistentRepo").toURL());
+        Response response = githubClient.fetch(URI.create("https://github.com/notExistentUser/notExistentRepo").toURL());
 
-        assertThat(supplier).isNull();
+        assertThat(response).isNull();
     }
 }

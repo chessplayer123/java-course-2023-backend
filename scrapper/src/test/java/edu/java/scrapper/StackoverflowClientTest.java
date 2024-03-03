@@ -1,11 +1,9 @@
 package edu.java.scrapper;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.java.client.github.GithubClient;
-import edu.java.client.github.GithubRepositorySubClient;
 import edu.java.client.stackoverflow.StackoverflowClient;
-import edu.java.client.stackoverflow.StackoverflowQuestionSubClient;
-import edu.java.link.LinkInfoSupplier;
+import edu.java.client.stackoverflow.StackoverflowQuestionHandler;
+import edu.java.response.Response;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class StackoverflowClientTest extends AbstractTest {
     private static final WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
-    private final StackoverflowClient stackoverflowClient = new StackoverflowClient(server.baseUrl(), List.of(new StackoverflowQuestionSubClient()));
+    private final StackoverflowClient stackoverflowClient = new StackoverflowClient(server.baseUrl(), List.of(new StackoverflowQuestionHandler()));
 
     @BeforeAll
     public static void startServer() {
@@ -43,11 +41,11 @@ public class StackoverflowClientTest extends AbstractTest {
             )
         );
 
-        LinkInfoSupplier supplier = stackoverflowClient.fetch(URI.create(
+        Response response = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/32126613/c-equivalent-of-rusts-resultt-e-type"
         ).toURL());
 
-        String actualSummary = supplier.getLinkSummary();
+        String actualSummary = response.getSummary();
         String expectedSummary = "StackOverflow question 'C++ equivalent of Rust's Result<T, E> type?' " +
             "(https://stackoverflow.com/questions/32126613/c-equivalent-of-rusts-resultt-e-type). " +
             "Last updated at 2023-02-06T15:34:55Z";
@@ -73,14 +71,14 @@ public class StackoverflowClientTest extends AbstractTest {
             )
         );
 
-        LinkInfoSupplier prevSupplier = stackoverflowClient.fetch(URI.create(
+        Response prevResponse = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/32126613/c-equivalent-of-rusts-resultt-e-type"
         ).toURL());
-        LinkInfoSupplier newSupplier = stackoverflowClient.fetch(URI.create(
+        Response newResponse = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/56016409/how-to-exclude-certain-classes-from-being-included-in-the-code-coverage-java"
         ).toURL());
 
-        String actualDifference = newSupplier.getDifference(prevSupplier);
+        String actualDifference = newResponse.getDifference(prevResponse);
         String expectedDifference = """
             StackOverflow questions changes:
             + Title changed: 'C++ equivalent of Rust's Result<T, E> type?' -> 'How to exclude certain classes from being included in the code coverage? (Java)'

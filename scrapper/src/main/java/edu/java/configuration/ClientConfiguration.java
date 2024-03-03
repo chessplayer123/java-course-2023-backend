@@ -1,9 +1,10 @@
 package edu.java.configuration;
 
+import edu.java.client.bot.BotClient;
 import edu.java.client.github.GithubClient;
-import edu.java.client.github.GithubSubClient;
+import edu.java.client.github.GithubLinkHandler;
 import edu.java.client.stackoverflow.StackoverflowClient;
-import edu.java.client.stackoverflow.StackoverflowSubClient;
+import edu.java.client.stackoverflow.StackoverflowLinkHandler;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,16 +14,26 @@ public class ClientConfiguration {
     @Bean
     public GithubClient githubClient(
         ApplicationConfig config,
-        List<GithubSubClient> githubSubClients
+        List<GithubLinkHandler> githubLinkHandlers
     ) {
-        return new GithubClient(config.api().githubUrl(), githubSubClients);
+        return new GithubClient(config.api().githubUrl(), githubLinkHandlers);
     }
 
     @Bean
     public StackoverflowClient stackOverflowClient(
         ApplicationConfig config,
-        List<StackoverflowSubClient> stackoverflowSubClients
+        List<StackoverflowLinkHandler> stackoverflowLinkHandlers
     ) {
-        return new StackoverflowClient(config.api().stackoverflowUrl(), stackoverflowSubClients);
+        return new StackoverflowClient(config.api().stackoverflowUrl(), stackoverflowLinkHandlers);
+    }
+
+    @Bean
+    public String botApiUrl(ApplicationConfig config) {
+        return config.api().botUrl();
+    }
+
+    @Bean
+    public BotClient botClient(ApplicationConfig config) {
+        return new BotClient(config.api().botUrl());
     }
 }

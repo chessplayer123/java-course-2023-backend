@@ -1,21 +1,19 @@
 package edu.java.client.stackoverflow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import edu.java.exceptions.DifferenceIsNotSupportedException;
-import edu.java.link.LinkInfoSupplier;
-import jakarta.annotation.Nullable;
+import edu.java.response.Response;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
-public class StackoverflowQuestionInfo implements LinkInfoSupplier {
+public class StackoverflowQuestionResponse implements Response {
     private final String title;
     private final String url;
     private final OffsetDateTime lastUpdated;
 
-    public StackoverflowQuestionInfo(
+    public StackoverflowQuestionResponse(
         @JsonProperty("items")
         List<Map<String, Object>> items
     ) {
@@ -27,7 +25,7 @@ public class StackoverflowQuestionInfo implements LinkInfoSupplier {
     }
 
     @Override
-    public String getLinkSummary() {
+    public String getSummary() {
         return "StackOverflow question '%s' (%s). Last updated at %s".formatted(
             title,
             url,
@@ -36,13 +34,12 @@ public class StackoverflowQuestionInfo implements LinkInfoSupplier {
     }
 
     @Override
-    @Nullable
-    public String getDifference(LinkInfoSupplier supplier) throws DifferenceIsNotSupportedException {
-        if (supplier.getClass() != StackoverflowQuestionInfo.class) {
-            throw new DifferenceIsNotSupportedException();
+    public String getDifference(Response supplier) throws IllegalArgumentException {
+        if (supplier.getClass() != getClass()) {
+            throw new IllegalArgumentException();
         }
 
-        StackoverflowQuestionInfo question = (StackoverflowQuestionInfo) supplier;
+        StackoverflowQuestionResponse question = (StackoverflowQuestionResponse) supplier;
         if (this.equals(question)) {
             return null;
         }
@@ -77,10 +74,10 @@ public class StackoverflowQuestionInfo implements LinkInfoSupplier {
     public boolean equals(Object o) {
         if (o == null) {
             return false;
-        } else if (o.getClass() != StackoverflowQuestionInfo.class) {
+        } else if (o.getClass() != StackoverflowQuestionResponse.class) {
             return false;
         }
-        StackoverflowQuestionInfo otherInfo = (StackoverflowQuestionInfo) o;
+        StackoverflowQuestionResponse otherInfo = (StackoverflowQuestionResponse) o;
         return title.equals(otherInfo.title) && url.equals(otherInfo.url) && lastUpdated.equals(otherInfo.lastUpdated);
     }
 }

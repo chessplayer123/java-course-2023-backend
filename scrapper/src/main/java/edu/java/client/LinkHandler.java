@@ -1,15 +1,15 @@
 package edu.java.client;
 
-import edu.java.link.LinkInfoSupplier;
+import edu.java.response.Response;
 import java.net.URL;
 import java.util.regex.Pattern;
 
-public abstract class SubClient {
+public abstract class LinkHandler {
     protected abstract Pattern getUrlPattern();
 
-    public abstract String convertUrlToApiPath(URL url);
+    public abstract Class<? extends Response> getResponseType();
 
-    public abstract Class<? extends LinkInfoSupplier> getInfoSupplierType();
+    public abstract String convertUrlToApiPath(URL url);
 
     public boolean supports(URL url) {
         return getUrlPattern().matcher(url.toString()).matches();

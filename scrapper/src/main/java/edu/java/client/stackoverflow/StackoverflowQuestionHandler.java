@@ -1,18 +1,23 @@
 package edu.java.client.stackoverflow;
 
-import edu.java.link.LinkInfoSupplier;
+import edu.java.response.Response;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StackoverflowQuestionSubClient extends StackoverflowSubClient {
+public class StackoverflowQuestionHandler extends StackoverflowLinkHandler {
     private static final Pattern QUESTION_URL_PATTERN = Pattern.compile("https://stackoverflow.com/questions/(\\d+).*");
 
     @Override
     protected Pattern getUrlPattern() {
         return QUESTION_URL_PATTERN;
+    }
+
+    @Override
+    public Class<? extends Response> getResponseType() {
+        return StackoverflowQuestionResponse.class;
     }
 
     @Override
@@ -23,10 +28,5 @@ public class StackoverflowQuestionSubClient extends StackoverflowSubClient {
         }
         String questionId = matcher.group(1);
         return "/questions/%s?site=stackoverflow".formatted(questionId);
-    }
-
-    @Override
-    public Class<? extends LinkInfoSupplier> getInfoSupplierType() {
-        return StackoverflowQuestionInfo.class;
     }
 }
