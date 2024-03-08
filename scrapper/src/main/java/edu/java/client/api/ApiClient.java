@@ -1,0 +1,56 @@
+package edu.java.client.api;
+
+import edu.java.exceptions.InvalidLinkException;
+import edu.java.handlers.LinkHandler;
+import edu.java.response.LinkInfo;
+import java.net.URL;
+import java.util.List;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
+
+public abstract class ApiClient {
+    private final WebClient webClient;
+    private final List<? extends LinkHandler> handlers;
+
+    public ApiClient(String url, List<? extends LinkHandler> subClients) {
+        webClient = WebClient.create(url);
+        this.handlers = subClients;
+    }
+
+    private <T extends LinkInfo> T executeRequest(
+        String endpoint,
+        Class<T> responseClass
+    ) throws InvalidLinkException {
+        try {
+            return webClient
+                .get()
+                .uri(endpoint)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(responseClass)
+                .block();
+        } catch (WebClientException err) {
+            throw new InvalidLinkException();
+        }
+    }
+
+    public <T> LinkInfo fetch(URL url) throws InvalidLinkException {
+        for (LinkHandler handler : handlers) {
+            if (!handler.supports(url)) {
+                continue;
+            }
+
+            return executeRequest(
+                handler.convertUrlToApiPath(url),
+                handler.getResponseType()
+            );
+        }
+        return null;
+    }
+
+    public boolean supports(URL url) {
+        return handlers.stream()
+            .anyMatch(handler -> handler.supports(url));
+    }
+}

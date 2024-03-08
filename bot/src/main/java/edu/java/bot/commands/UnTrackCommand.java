@@ -4,10 +4,10 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.exceptions.UserIsNotRegisteredException;
-import edu.java.bot.link.Link;
-import edu.java.bot.user.UserService;
+import edu.java.bot.exceptions.CommandException;
+import edu.java.bot.service.UserService;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class UnTrackCommand implements Command {
-    private static final String URL_DOMAIN_SEPARATOR = ";;";
-
     private final UserService userService;
     private final Set<Long> expectedUsers = new HashSet<>();
 
@@ -38,10 +36,10 @@ public class UnTrackCommand implements Command {
         return update.message().text().equals(command());
     }
 
-    public SendMessage handleCallback(Update update) throws UserIsNotRegisteredException {
+    public SendMessage handleCallback(Update update) throws CommandException {
         long userId = update.callbackQuery().from().id();
-        String[] linkDomain = update.callbackQuery().data().split(URL_DOMAIN_SEPARATOR);
-        userService.unTrackLink(userId, new Link(linkDomain[0], linkDomain[1]));
+        String link = update.callbackQuery().data();
+        userService.unTrackLink(userId, link);
         return new SendMessage(
             userId,
             "Link was successfully untracked"
@@ -49,12 +47,12 @@ public class UnTrackCommand implements Command {
     }
 
     @Override
-    public SendMessage handle(Update update) throws UserIsNotRegisteredException {
+    public SendMessage handle(Update update) throws CommandException {
         if (update.message() == null) {
             return handleCallback(update);
         }
 
-        Set<Link> links = userService.getTrackedLinks(update.message().chat().id());
+        List<String> links = userService.getTrackedLinks(update.message().chat().id());
         if (links.isEmpty()) {
             return new SendMessage(update.message().chat().id(), "Your tracking list is empty");
         }
@@ -63,7 +61,7 @@ public class UnTrackCommand implements Command {
             .replyMarkup(new InlineKeyboardMarkup(
                 links.stream()
                 .map(link -> new InlineKeyboardButton[] {
-                    new InlineKeyboardButton(link.url()).callbackData(link.url() + URL_DOMAIN_SEPARATOR + link.domain())
+                    new InlineKeyboardButton(link).callbackData(link)
                 }).toArray(InlineKeyboardButton[][]::new)
             )
         );

@@ -1,9 +1,9 @@
 package edu.java.scrapper;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.java.client.stackoverflow.StackoverflowClient;
-import edu.java.client.stackoverflow.StackoverflowQuestionHandler;
-import edu.java.response.Response;
+import edu.java.client.api.stackoverflow.StackoverflowClient;
+import edu.java.client.api.stackoverflow.StackoverflowQuestionHandler;
+import edu.java.response.LinkInfo;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,7 +41,7 @@ public class StackoverflowClientTest extends AbstractTest {
             )
         );
 
-        Response response = stackoverflowClient.fetch(URI.create(
+        LinkInfo response = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/32126613/c-equivalent-of-rusts-resultt-e-type"
         ).toURL());
 
@@ -71,10 +71,10 @@ public class StackoverflowClientTest extends AbstractTest {
             )
         );
 
-        Response prevResponse = stackoverflowClient.fetch(URI.create(
+        LinkInfo prevResponse = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/32126613/c-equivalent-of-rusts-resultt-e-type"
         ).toURL());
-        Response newResponse = stackoverflowClient.fetch(URI.create(
+        LinkInfo newResponse = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/56016409/how-to-exclude-certain-classes-from-being-included-in-the-code-coverage-java"
         ).toURL());
 

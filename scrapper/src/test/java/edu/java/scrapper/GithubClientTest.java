@@ -1,9 +1,11 @@
 package edu.java.scrapper;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.java.client.github.GithubClient;
-import edu.java.client.github.GithubRepositoryHandler;
-import edu.java.response.Response;
+import edu.java.client.api.github.GithubClient;
+import edu.java.client.api.github.GithubRepositoryHandler;
+import edu.java.exceptions.InvalidLinkException;
+import edu.java.exceptions.LinkIsNotSupportedException;
+import edu.java.response.LinkInfo;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,6 +17,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class GithubClientTest extends AbstractTest {
     private static final WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
@@ -41,7 +44,7 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        Response response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
+        LinkInfo response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
 
         String actualSummary = response.getSummary();
         String expectedSummary = "Github repository 'chessplayer123/java-course-2023-backend' (https://github.com/chessplayer123/java-course-2023-backend). Last updated at 2023-10-14T11:23:44Z.";
@@ -67,8 +70,9 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        Response prevResponse = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
-        Response newResponse = githubClient.fetch(URI.create("https://github.com/newUserName/newRepoName").toURL());
+        LinkInfo
+            prevResponse = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
+        LinkInfo newResponse = githubClient.fetch(URI.create("https://github.com/newUserName/newRepoName").toURL());
 
         String actualDifference = newResponse.getDifference(prevResponse);
         String expectedDifference = """
@@ -91,7 +95,7 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        Response response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
+        LinkInfo response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
 
         assertThat(response.getDifference(response)).isNull();
     }
@@ -105,8 +109,8 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        Response response = githubClient.fetch(URI.create("https://github.com/notExistentUser/notExistentRepo").toURL());
-
-        assertThat(response).isNull();
+        assertThatThrownBy(() -> {
+            githubClient.fetch(URI.create("https://github.com/notExistentUser/notExistentRepo").toURL());
+        }).isInstanceOf(InvalidLinkException.class);
     }
 }

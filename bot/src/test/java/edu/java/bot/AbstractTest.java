@@ -1,20 +1,22 @@
 package edu.java.bot;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.pengrad.telegrambot.TelegramBot;
-import edu.java.bot.link.LinkProcessor;
-import edu.java.bot.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import edu.java.bot.client.scrapper.ScrapperClient;
+import edu.java.bot.service.ScrapperUserService;
+import edu.java.bot.service.UserService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.web.server.WebServer;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 @SpringBootTest(classes = {BotApplication.class})
 public abstract class AbstractTest {
     @MockBean
     TelegramBot telegramBot;
 
-    @Autowired
-    protected UserService userService;
-
-    @Autowired
-    protected LinkProcessor linkProcessor;
+    @MockBean
+    UserService userService;
 }

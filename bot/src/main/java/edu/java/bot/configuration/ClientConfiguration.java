@@ -12,7 +12,7 @@ public class ClientConfiguration {
     }
 
     @Bean
-    public ScrapperClient botClient(ApplicationConfig config) {
+    public ScrapperClient scrapperClient(ApplicationConfig config) {
         return new ScrapperClient(config.scrapperApiUrl());
     }
 }

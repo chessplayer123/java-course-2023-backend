@@ -3,8 +3,10 @@ package edu.java.bot.base;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import com.pengrad.telegrambot.response.SendResponse;
+import edu.java.bot.exceptions.TgChatBotException;
 import edu.java.bot.processor.ChatProcessor;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
@@ -31,6 +33,18 @@ public class LinkTrackerBot implements Bot {
             }
         }
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
+    }
+
+    @Override
+    public void sendMessage(Long chatId, String message) throws TgChatBotException {
+        SendResponse response = telegramBot.execute(new SendMessage(chatId, message));
+        if (!response.isOk()) {
+            throw new TgChatBotException(
+                response.description(),
+                String.valueOf(response.errorCode()),
+                "Can't send message to %d".formatted(chatId)
+            );
+        }
     }
 
     @Override

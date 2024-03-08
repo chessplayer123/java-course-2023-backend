@@ -2,11 +2,8 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.exceptions.DomainIsNotSupportedException;
-import edu.java.bot.exceptions.UserIsNotRegisteredException;
-import edu.java.bot.link.Link;
-import edu.java.bot.link.LinkProcessor;
-import edu.java.bot.user.UserService;
+import edu.java.bot.exceptions.CommandException;
+import edu.java.bot.service.UserService;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +12,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class TrackCommand implements Command {
-    private final UserService userService;
-    private final LinkProcessor handlerChain;
     private final Set<Long> expectedUsers = new HashSet<>();
+    private final UserService userService;
 
     @Override
     public String command() {
@@ -40,24 +36,14 @@ public class TrackCommand implements Command {
     }
 
     @Override
-    public SendMessage handle(Update update) throws UserIsNotRegisteredException {
+    public SendMessage handle(Update update) throws CommandException {
         long userId = update.message().chat().id();
-        if (!userService.isUserRegistered(userId)) {
-            throw new UserIsNotRegisteredException();
-        } else if (!expectedUsers.contains(userId)) {
+        if (!expectedUsers.contains(userId)) {
             expectedUsers.add(userId);
             return new SendMessage(userId, "Enter the link:");
         }
-
         expectedUsers.remove(userId);
-        String message = "Link was successfully added to your track list";
-        try {
-            String domain = handlerChain.getDomain(update.message().text());
-            userService.trackLink(userId, new Link(update.message().text(), domain));
-        } catch (DomainIsNotSupportedException e) {
-            message = "Link is not supported for now";
-        }
-
-        return new SendMessage(userId, message);
+        userService.trackLink(userId, update.message().text());
+        return new SendMessage(userId, "Link was successfully added to your track list");
     }
 }
