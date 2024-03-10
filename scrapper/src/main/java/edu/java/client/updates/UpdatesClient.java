@@ -2,11 +2,12 @@ package edu.java.client.updates;
 
 import edu.java.dto.request.LinkUpdate;
 import edu.java.dto.response.ApiErrorResponse;
-import lombok.RequiredArgsConstructor;
+import edu.java.exceptions.LinkUpdateException;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-@RequiredArgsConstructor
 public class UpdatesClient {
     private final WebClient webClient;
 
@@ -21,7 +22,12 @@ public class UpdatesClient {
             .bodyValue(update)
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .bodyToMono(ApiErrorResponse.class)
+            .onStatus(HttpStatusCode::isError, response -> response
+                    .bodyToMono(ApiErrorResponse.class)
+                    .onErrorMap(error -> new LinkUpdateException(error.getMessage()))
+                    .flatMap(body -> Mono.error(new LinkUpdateException(body.description())))
+            )
+            .toBodilessEntity()
             .block();
     }
 }

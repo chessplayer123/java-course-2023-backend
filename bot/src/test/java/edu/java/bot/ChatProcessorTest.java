@@ -4,10 +4,9 @@ import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.commands.ListCommand;
 import edu.java.bot.commands.StartCommand;
-import edu.java.bot.commands.UnTrackCommand;
+import edu.java.bot.commands.UntrackCommand;
 import edu.java.bot.processor.ChatProcessor;
 import edu.java.bot.processor.DefaultChatProcessor;
-import edu.java.bot.service.UserService;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,7 @@ public class ChatProcessorTest {
         ChatProcessor chatProcessor = new DefaultChatProcessor(List.of(
             new ListCommand(null),
             new StartCommand(null),
-            new UnTrackCommand(null)
+            new UntrackCommand(null)
         ));
         Update update = CommandTest.mockUpdate(1L, "/unknown");
 
@@ -36,7 +35,7 @@ public class ChatProcessorTest {
     public void getBotCommandsMethodShouldReturnAllAddedCommands() {
         ChatProcessor chatProcessor = new DefaultChatProcessor(List.of(
             new StartCommand(null),
-            new UnTrackCommand(null)
+            new UntrackCommand(null)
         ));
 
         BotCommand[] actualBotCommands = chatProcessor.getBotCommands();

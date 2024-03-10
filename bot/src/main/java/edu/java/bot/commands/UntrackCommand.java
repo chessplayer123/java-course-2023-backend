@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class UnTrackCommand implements Command {
+public class UntrackCommand implements Command {
     private final UserService userService;
     private final Set<Long> expectedUsers = new HashSet<>();
 

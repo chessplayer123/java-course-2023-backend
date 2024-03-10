@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/tg-chat")
-public class UsersController {
+public class ChatController {
     private final ChatService service;
 
     @Operation(summary = "Delete chat with provided id")
@@ -29,7 +29,7 @@ public class UsersController {
             mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @DeleteMapping("/{id}")
-    public void deleteChat(@PathVariable Long id) throws UserIsNotRegisteredException {
+    public void unregisterChat(@PathVariable Long id) throws UserIsNotRegisteredException {
         service.unregister(id);
     }
 

@@ -43,7 +43,7 @@ public class StackoverflowClientTest extends AbstractTest {
 
         LinkInfo response = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/32126613/c-equivalent-of-rusts-resultt-e-type"
-        ).toURL());
+        ));
 
         String actualSummary = response.getSummary();
         String expectedSummary = "StackOverflow question 'C++ equivalent of Rust's Result<T, E> type?' " +
@@ -73,10 +73,10 @@ public class StackoverflowClientTest extends AbstractTest {
 
         LinkInfo prevResponse = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/32126613/c-equivalent-of-rusts-resultt-e-type"
-        ).toURL());
+        ));
         LinkInfo newResponse = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/56016409/how-to-exclude-certain-classes-from-being-included-in-the-code-coverage-java"
-        ).toURL());
+        ));
 
         String actualDifference = newResponse.getDifference(prevResponse);
         String expectedDifference = """

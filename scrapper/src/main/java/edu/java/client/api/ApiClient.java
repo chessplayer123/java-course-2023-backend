@@ -3,7 +3,7 @@ package edu.java.client.api;
 import edu.java.exceptions.InvalidLinkException;
 import edu.java.handlers.LinkHandler;
 import edu.java.response.LinkInfo;
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -35,7 +35,7 @@ public abstract class ApiClient {
         }
     }
 
-    public <T> LinkInfo fetch(URL url) throws InvalidLinkException {
+    public <T> LinkInfo fetch(URI url) throws InvalidLinkException {
         for (LinkHandler handler : handlers) {
             if (!handler.supports(url)) {
                 continue;
@@ -49,7 +49,7 @@ public abstract class ApiClient {
         return null;
     }
 
-    public boolean supports(URL url) {
+    public boolean supports(URI url) {
         return handlers.stream()
             .anyMatch(handler -> handler.supports(url));
     }

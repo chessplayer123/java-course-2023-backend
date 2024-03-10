@@ -16,12 +16,12 @@ public class InMemoryLinkService implements LinkService {
     private final InMemoryRepository repository;
 
     @Override
-    public Link add(Long chatId, LinkInfo url) throws UserIsNotRegisteredException, ReAddingLinkException {
+    public Link track(Long chatId, LinkInfo url) throws UserIsNotRegisteredException, ReAddingLinkException {
         return repository.addLink(chatId, url);
     }
 
     @Override
-    public Link remove(Long chatId, URI url) throws UserIsNotRegisteredException, LinkIsNotPresentException {
+    public Link untrack(Long chatId, URI url) throws UserIsNotRegisteredException, LinkIsNotPresentException {
         return repository.removeLink(chatId, url);
     }
 

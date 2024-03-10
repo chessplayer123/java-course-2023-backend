@@ -1,34 +1,25 @@
 package edu.java.bot;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.CallbackQuery;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
-import edu.java.bot.client.scrapper.ScrapperClient;
 import edu.java.bot.commands.Command;
 import edu.java.bot.commands.ListCommand;
 import edu.java.bot.commands.StartCommand;
 import edu.java.bot.commands.TrackCommand;
-import edu.java.bot.commands.UnTrackCommand;
-import edu.java.bot.service.ScrapperUserService;
+import edu.java.bot.commands.UntrackCommand;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
@@ -60,7 +51,7 @@ public class CommandTest extends AbstractTest {
             Arguments.of(new ListCommand(userService), new BotCommand("/list", "list all subscribed links")),
             Arguments.of(new StartCommand(userService), new BotCommand("/start", "register user")),
             Arguments.of(new TrackCommand(userService), new BotCommand("/track", "add new link to tracked list")),
-            Arguments.of(new UnTrackCommand(userService), new BotCommand("/untrack", "untrack link")),
+            Arguments.of(new UntrackCommand(userService), new BotCommand("/untrack", "untrack link")),
         };
     }
 
@@ -142,7 +133,7 @@ public class CommandTest extends AbstractTest {
     @SneakyThrows
     @MethodSource("nextUser")
     public void unTrackCommandShouldRemoveLinkFromTracked(long userId) {
-        Command command = new UnTrackCommand(userService);
+        Command command = new UntrackCommand(userService);
         Update untrackUpdate = mockUpdate(userId, "/untrack");
 
         command.handle(untrackUpdate);

@@ -1,7 +1,7 @@
 package edu.java.client.api.github;
 
 import edu.java.response.LinkInfo;
-import java.net.URL;
+import java.net.URI;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ public class GithubRepositoryHandler extends GithubLinkHandler {
     }
 
     @Override
-    public String convertUrlToApiPath(URL url) {
+    public String convertUrlToApiPath(URI url) {
         return "/repos/%s".formatted(url.getPath());
     }
 }

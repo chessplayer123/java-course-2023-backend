@@ -8,15 +8,9 @@ import java.net.URI;
 import java.util.Collection;
 
 public interface LinkService {
-    Link add(Long chatId, LinkInfo url) throws ReAddingLinkException, UserIsNotRegisteredException;
+    Link track(Long chatId, LinkInfo url) throws ReAddingLinkException, UserIsNotRegisteredException;
 
-    Link remove(Long chatId, URI url) throws UserIsNotRegisteredException, LinkIsNotPresentException;
+    Link untrack(Long chatId, URI url) throws UserIsNotRegisteredException, LinkIsNotPresentException;
 
     Collection<Link> listAll(Long chatId) throws UserIsNotRegisteredException;
-
-    record Link(
-        Long id,
-        LinkInfo info
-    ) {
-    }
 }

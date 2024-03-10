@@ -44,7 +44,7 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        LinkInfo response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
+        LinkInfo response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend"));
 
         String actualSummary = response.getSummary();
         String expectedSummary = "Github repository 'chessplayer123/java-course-2023-backend' (https://github.com/chessplayer123/java-course-2023-backend). Last updated at 2023-10-14T11:23:44Z.";
@@ -71,8 +71,8 @@ public class GithubClientTest extends AbstractTest {
         );
 
         LinkInfo
-            prevResponse = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
-        LinkInfo newResponse = githubClient.fetch(URI.create("https://github.com/newUserName/newRepoName").toURL());
+            prevResponse = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend"));
+        LinkInfo newResponse = githubClient.fetch(URI.create("https://github.com/newUserName/newRepoName"));
 
         String actualDifference = newResponse.getDifference(prevResponse);
         String expectedDifference = """
@@ -95,7 +95,7 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        LinkInfo response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
+        LinkInfo response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend"));
 
         assertThat(response.getDifference(response)).isNull();
     }
@@ -110,7 +110,7 @@ public class GithubClientTest extends AbstractTest {
         );
 
         assertThatThrownBy(() -> {
-            githubClient.fetch(URI.create("https://github.com/notExistentUser/notExistentRepo").toURL());
+            githubClient.fetch(URI.create("https://github.com/notExistentUser/notExistentRepo"));
         }).isInstanceOf(InvalidLinkException.class);
     }
 }

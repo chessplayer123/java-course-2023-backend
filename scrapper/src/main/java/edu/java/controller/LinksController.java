@@ -1,13 +1,14 @@
 package edu.java.controller;
 
 import edu.java.client.api.ApiClient;
-import edu.java.dto.request.RemoveLinkRequest;
 import edu.java.dto.request.TrackLinkRequest;
+import edu.java.dto.request.UntrackLinkRequest;
 import edu.java.dto.response.ApiErrorResponse;
 import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinkResponse;
 import edu.java.link.LinkProcessor;
 import edu.java.response.LinkInfo;
+import edu.java.service.Link;
 import edu.java.service.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,7 +16,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.net.URI;
-import java.net.URL;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -55,10 +55,10 @@ public class LinksController {
         @RequestHeader(value = "Tg-Chat-Id")
         Long chatId,
         @RequestBody
-        RemoveLinkRequest request
+        UntrackLinkRequest request
     ) {
-        Long id = service.remove(chatId, URI.create(request.link())).id();
-        return new LinkResponse(id, URI.create(request.link()));
+        Link link = service.untrack(chatId, URI.create(request.link()));
+        return new LinkResponse(link.id(), link.info().getLink());
     }
 
     @Operation(summary = "Add link to tracking list")
@@ -84,10 +84,10 @@ public class LinksController {
         @RequestBody
         TrackLinkRequest request
     ) {
-        URL link = URI.create(request.link()).toURL();
+        URI link = URI.create(request.link());
         ApiClient client = processor.findClient(link);
         LinkInfo response = client.fetch(link);
-        LinkService.Link addedLink = service.add(chatId, response);
+        Link addedLink = service.track(chatId, response);
         return new LinkResponse(addedLink.id(), addedLink.info().getLink());
     }
 

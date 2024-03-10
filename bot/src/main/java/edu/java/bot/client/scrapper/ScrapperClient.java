@@ -1,9 +1,10 @@
 package edu.java.bot.client.scrapper;
 
 import edu.java.bot.exceptions.CommandException;
-import edu.java.dto.request.RemoveLinkRequest;
 import edu.java.dto.request.TrackLinkRequest;
+import edu.java.dto.request.UntrackLinkRequest;
 import edu.java.dto.response.ApiErrorResponse;
+import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinkResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
@@ -20,12 +21,14 @@ public class ScrapperClient {
         webClient = WebClient.create(url);
     }
 
-    private Mono<CommandException> handleApiError(ClientResponse response) {
-        ApiErrorResponse apiError = response.bodyToMono(ApiErrorResponse.class).block();
-        return Mono.error(new CommandException(apiError.description()));
+    private Mono<CommandException> handleApiError(ClientResponse response)  {
+        return response
+            .bodyToMono(ApiErrorResponse.class)
+            .onErrorMap(error -> new CommandException(error.getMessage()))
+            .flatMap(body -> Mono.error(new CommandException(body.description())));
     }
 
-    public void registerChat(Long chatId) {
+    public void registerChat(Long chatId) throws CommandException {
         webClient
             .post()
             .uri("/tg-chat/%d".formatted(chatId))
@@ -47,8 +50,8 @@ public class ScrapperClient {
             .block();
     }
 
-    public void addLink(Long chatId, String link) {
-        webClient
+    public LinkResponse addLink(Long chatId, String link) {
+        return webClient
             .post()
             .uri("/links")
             .header("Tg-Chat-Id", String.valueOf(chatId))
@@ -56,20 +59,20 @@ public class ScrapperClient {
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .onStatus(HttpStatusCode::isError, this::handleApiError)
-            .toBodilessEntity()
+            .bodyToMono(LinkResponse.class)
             .block();
     }
 
-    public void deleteLink(Long chatId, String link) {
-        webClient
+    public LinkResponse deleteLink(Long chatId, String link) {
+        return webClient
             .method(HttpMethod.DELETE)
             .uri("/links")
-            .bodyValue(new RemoveLinkRequest(link))
+            .bodyValue(new UntrackLinkRequest(link))
             .header("Tg-Chat-Id", String.valueOf(chatId))
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .onStatus(HttpStatusCode::isError, this::handleApiError)
-            .toBodilessEntity()
+            .bodyToMono(LinkResponse.class)
             .block();
     }
 
