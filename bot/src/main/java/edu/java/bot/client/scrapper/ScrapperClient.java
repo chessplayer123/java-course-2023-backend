@@ -31,7 +31,7 @@ public class ScrapperClient {
     public void registerChat(Long chatId) throws CommandException {
         webClient
             .post()
-            .uri("/tg-chat/%d".formatted(chatId))
+            .uri("/tg-chat/{chatId}", chatId)
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .onStatus(HttpStatusCode::isError, this::handleApiError)
@@ -42,7 +42,7 @@ public class ScrapperClient {
     public void unregisterChat(Long chatId) {
         webClient
             .delete()
-            .uri("/tg-chat/%d".formatted(chatId))
+            .uri("/tg-chat/{chatId}", chatId)
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .onStatus(HttpStatusCode::isError, this::handleApiError)
