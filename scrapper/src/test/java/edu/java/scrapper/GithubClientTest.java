@@ -1,9 +1,11 @@
 package edu.java.scrapper;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.java.client.github.GithubClient;
-import edu.java.client.github.GithubRepositorySubClient;
-import edu.java.link.LinkInfoSupplier;
+import edu.java.client.api.github.GithubClient;
+import edu.java.client.api.github.GithubRepositoryHandler;
+import edu.java.exceptions.InvalidLinkException;
+import edu.java.exceptions.LinkIsNotSupportedException;
+import edu.java.response.LinkInfo;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,10 +17,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class GithubClientTest extends AbstractTest {
     private static final WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
-    private final GithubClient githubClient = new GithubClient(server.baseUrl(), List.of(new GithubRepositorySubClient()));
+    private final GithubClient githubClient = new GithubClient(server.baseUrl(), List.of(new GithubRepositoryHandler()));
 
     @BeforeAll
     public static void startServer() {
@@ -41,9 +44,9 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        LinkInfoSupplier supplier = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
+        LinkInfo response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend"));
 
-        String actualSummary = supplier.getLinkSummary();
+        String actualSummary = response.getSummary();
         String expectedSummary = "Github repository 'chessplayer123/java-course-2023-backend' (https://github.com/chessplayer123/java-course-2023-backend). Last updated at 2023-10-14T11:23:44Z.";
 
         assertThat(actualSummary).isEqualTo(expectedSummary);
@@ -67,10 +70,11 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        LinkInfoSupplier prevSupplier = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
-        LinkInfoSupplier newSupplier = githubClient.fetch(URI.create("https://github.com/newUserName/newRepoName").toURL());
+        LinkInfo
+            prevResponse = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend"));
+        LinkInfo newResponse = githubClient.fetch(URI.create("https://github.com/newUserName/newRepoName"));
 
-        String actualDifference = newSupplier.getDifference(prevSupplier);
+        String actualDifference = newResponse.getDifference(prevResponse);
         String expectedDifference = """
             Repository changes:
             + Name changed: 'chessplayer123/java-course-2023-backend' -> 'newUserName/newRepoName'
@@ -91,9 +95,9 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        LinkInfoSupplier supplier = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend").toURL());
+        LinkInfo response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend"));
 
-        assertThat(supplier.getDifference(supplier)).isNull();
+        assertThat(response.getDifference(response)).isNull();
     }
 
     @Test
@@ -105,8 +109,8 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        LinkInfoSupplier supplier = githubClient.fetch(URI.create("https://github.com/notExistentUser/notExistentRepo").toURL());
-
-        assertThat(supplier).isNull();
+        assertThatThrownBy(() -> {
+            githubClient.fetch(URI.create("https://github.com/notExistentUser/notExistentRepo"));
+        }).isInstanceOf(InvalidLinkException.class);
     }
 }

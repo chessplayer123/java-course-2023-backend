@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.commands.Command;
-import edu.java.bot.exceptions.UserIsNotRegisteredException;
+import edu.java.bot.exceptions.CommandException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,8 +25,8 @@ public class DefaultChatProcessor implements ChatProcessor {
 
             try {
                 return cmd.handle(update);
-            } catch (UserIsNotRegisteredException e) {
-                return new SendMessage(userId, "You are not registered. Type /start to register");
+            } catch (CommandException e) {
+                return new SendMessage(userId, e.getMessage());
             }
         }
 
