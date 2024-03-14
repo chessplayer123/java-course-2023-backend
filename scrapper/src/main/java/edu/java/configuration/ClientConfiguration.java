@@ -33,7 +33,7 @@ public class ClientConfiguration {
     }
 
     @Bean
-    public UpdatesClient botClient(ApplicationConfig config) {
-        return new UpdatesClient(config.api().botUrl());
+    public UpdatesClient botClient(String botUrl) {
+        return new UpdatesClient(botUrl);
     }
 }

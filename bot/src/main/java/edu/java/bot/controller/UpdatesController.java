@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import static edu.java.bot.controller.Mappings.UPDATES_MAPPING;
 
 @RestController
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/updates")
+@RequestMapping(UPDATES_MAPPING)
 public class UpdatesController {
     private final UserService service;
     private final Bot bot;

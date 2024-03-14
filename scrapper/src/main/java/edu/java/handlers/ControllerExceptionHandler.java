@@ -24,10 +24,10 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(UserIsNotRegisteredException.class)
     public ApiErrorResponse userIsNotRegistered(UserIsNotRegisteredException exception) {
         return new ApiErrorResponse(
-            "You are not registered",
+            exception.getDescription(),
             "401",
-            "UserIsNotRegisteredException",
-            "User is not registered",
+            exception.getClass().getName(),
+            exception.getMessage(),
             getStackStrace(exception)
         );
     }
@@ -35,10 +35,10 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ReAddingLinkException.class)
     public ApiErrorResponse linkReAdding(ReAddingLinkException exception) {
         return new ApiErrorResponse(
-            "Link is already in your track list",
+            exception.getDescription(),
             "409",
-            "ReAddingLinkException",
-            "Attempting to re-add link to same user",
+            exception.getClass().getName(),
+            exception.getMessage(),
             getStackStrace(exception)
         );
     }
@@ -46,10 +46,10 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ReAddingUserException.class)
     public ApiErrorResponse userReAdding(ReAddingUserException exception) {
         return new ApiErrorResponse(
-            "You are already registered",
+            exception.getDescription(),
             "409",
-            "ReAddingUserException",
-            "Attempting to re-add already registered user",
+            exception.getClass().getName(),
+            exception.getMessage(),
             getStackStrace(exception)
         );
     }
@@ -57,10 +57,10 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(LinkIsNotPresentException.class)
     public ApiErrorResponse linkIsNotPresent(LinkIsNotPresentException exception) {
         return new ApiErrorResponse(
-            "Link is not in your track list",
+            exception.getDescription(),
             "404",
-            "LinkIsNotPresentException",
-            "Attempting to delete not present link",
+            exception.getClass().getName(),
+            exception.getMessage(),
             getStackStrace(exception)
         );
     }
@@ -68,10 +68,10 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(LinkIsNotSupportedException.class)
     public ApiErrorResponse linkIsNotSupported(LinkIsNotSupportedException exception) {
         return new ApiErrorResponse(
-            "Link is not supported",
+            exception.getDescription(),
             "400",
-            "LinkIsNotSupportedException",
-            "Attempting to track unsupported link",
+            exception.getClass().getName(),
+            exception.getMessage(),
             getStackStrace(exception)
         );
     }
@@ -79,10 +79,10 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(InvalidLinkException.class)
     public ApiErrorResponse linkIsNotValid(InvalidLinkException exception) {
         return new ApiErrorResponse(
-            "Link is not valid",
+            exception.getDescription(),
             "400",
-            "InvalidLinkException",
-            "Invalid link",
+            exception.getClass().getName(),
+            exception.getMessage(),
             getStackStrace(exception)
         );
     }

@@ -26,10 +26,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import static edu.java.controller.Mappings.LINKS_MAPPING;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/links")
+@RequestMapping(LINKS_MAPPING)
 public class LinksController {
     private final LinkProcessor processor;
     private final LinkService service;

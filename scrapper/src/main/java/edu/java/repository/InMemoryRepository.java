@@ -33,13 +33,19 @@ public class InMemoryRepository {
         links.remove(chatId);
     }
 
+    private boolean containsLink(Long chatId, URI newLink) {
+        return links.get(chatId)
+            .stream()
+            .anyMatch(link -> link.info().getLink().equals(newLink));
+    }
+
     public Link addLink(
         Long chatId,
         LinkInfo info
     ) throws UserIsNotRegisteredException, ReAddingLinkException {
         if (!links.containsKey(chatId)) {
             throw new UserIsNotRegisteredException();
-        } else if (links.get(chatId).stream().anyMatch(link -> link.info().getLink().equals(info.getLink()))) {
+        } else if (containsLink(chatId, info.getLink())) {
             throw new ReAddingLinkException();
         }
         Link link = new Link(linkId++, info);

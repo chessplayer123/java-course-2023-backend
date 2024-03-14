@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import static edu.java.controller.Mappings.TG_CHAT_MAPPING;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/tg-chat")
+@RequestMapping(TG_CHAT_MAPPING)
 public class ChatController {
     private final ChatService service;
 
