@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS chat (
+    id            BIGINT NOT NULL PRIMARY KEY,
+    registered_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
