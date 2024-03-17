@@ -1,6 +1,6 @@
 package edu.java.client.api.github;
 
-import edu.java.response.LinkInfo;
+import edu.java.response.LinkApiResponse;
 import java.net.URI;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ public class GithubRepositoryHandler extends GithubLinkHandler {
     }
 
     @Override
-    public Class<? extends LinkInfo> getResponseType() {
+    public Class<? extends LinkApiResponse> getResponseType() {
         return GithubRepositoryResponse.class;
     }
 

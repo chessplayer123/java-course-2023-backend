@@ -4,8 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.client.api.github.GithubClient;
 import edu.java.client.api.github.GithubRepositoryHandler;
 import edu.java.exceptions.InvalidLinkException;
-import edu.java.exceptions.LinkIsNotSupportedException;
-import edu.java.response.LinkInfo;
+import edu.java.response.LinkApiResponse;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -44,7 +43,7 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        LinkInfo response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend"));
+        LinkApiResponse response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend"));
 
         String actualSummary = response.getSummary();
         String expectedSummary = "Github repository 'chessplayer123/java-course-2023-backend' (https://github.com/chessplayer123/java-course-2023-backend). Last updated at 2023-10-14T11:23:44Z.";
@@ -70,11 +69,11 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        LinkInfo
+        LinkApiResponse
             prevResponse = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend"));
-        LinkInfo newResponse = githubClient.fetch(URI.create("https://github.com/newUserName/newRepoName"));
+        LinkApiResponse newResponse = githubClient.fetch(URI.create("https://github.com/newUserName/newRepoName"));
 
-        String actualDifference = newResponse.getDifference(prevResponse);
+        String actualDifference = newResponse.retrieveEvents(prevResponse);
         String expectedDifference = """
             Repository changes:
             + Name changed: 'chessplayer123/java-course-2023-backend' -> 'newUserName/newRepoName'
@@ -95,9 +94,9 @@ public class GithubClientTest extends AbstractTest {
             )
         );
 
-        LinkInfo response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend"));
+        LinkApiResponse response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend"));
 
-        assertThat(response.getDifference(response)).isNull();
+        assertThat(response.retrieveEvents(response)).isNull();
     }
 
     @Test

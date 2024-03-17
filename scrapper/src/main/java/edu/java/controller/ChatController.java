@@ -1,8 +1,8 @@
 package edu.java.controller;
 
 import edu.java.dto.response.ApiErrorResponse;
+import edu.java.exceptions.ChatIsNotRegisteredException;
 import edu.java.exceptions.ReAddingUserException;
-import edu.java.exceptions.UserIsNotRegisteredException;
 import edu.java.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,7 +30,7 @@ public class ChatController {
             mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @DeleteMapping("/{id}")
-    public void unregisterChat(@PathVariable Long id) throws UserIsNotRegisteredException {
+    public void unregisterChat(@PathVariable Long id) throws ChatIsNotRegisteredException {
         service.unregister(id);
     }
 

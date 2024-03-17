@@ -2,7 +2,7 @@ package edu.java.client.api;
 
 import edu.java.exceptions.InvalidLinkException;
 import edu.java.handlers.LinkHandler;
-import edu.java.response.LinkInfo;
+import edu.java.response.LinkApiResponse;
 import java.net.URI;
 import java.util.List;
 import org.springframework.http.MediaType;
@@ -18,7 +18,7 @@ public abstract class ApiClient {
         this.handlers = subClients;
     }
 
-    private <T extends LinkInfo> T executeRequest(
+    private <T extends LinkApiResponse> T executeRequest(
         String endpoint,
         Class<T> responseClass
     ) throws InvalidLinkException {
@@ -35,7 +35,7 @@ public abstract class ApiClient {
         }
     }
 
-    public <T> LinkInfo fetch(URI url) throws InvalidLinkException {
+    public <T> LinkApiResponse fetch(URI url) throws InvalidLinkException {
         for (LinkHandler handler : handlers) {
             if (!handler.supports(url)) {
                 continue;

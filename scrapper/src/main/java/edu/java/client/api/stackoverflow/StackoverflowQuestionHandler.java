@@ -1,6 +1,6 @@
 package edu.java.client.api.stackoverflow;
 
-import edu.java.response.LinkInfo;
+import edu.java.response.LinkApiResponse;
 import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +16,7 @@ public class StackoverflowQuestionHandler extends StackoverflowLinkHandler {
     }
 
     @Override
-    public Class<? extends LinkInfo> getResponseType() {
+    public Class<? extends LinkApiResponse> getResponseType() {
         return StackoverflowQuestionResponse.class;
     }
 

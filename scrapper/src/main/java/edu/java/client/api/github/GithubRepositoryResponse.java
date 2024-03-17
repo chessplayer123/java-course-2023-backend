@@ -1,7 +1,7 @@
 package edu.java.client.api.github;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import edu.java.response.LinkInfo;
+import edu.java.response.LinkApiResponse;
 import java.net.URI;
 import java.time.OffsetDateTime;
 
@@ -12,7 +12,7 @@ public record GithubRepositoryResponse(
     OffsetDateTime lastUpdated,
     @JsonProperty("html_url")
     URI url
-) implements LinkInfo {
+) implements LinkApiResponse {
     @Override
     public URI getLink() {
         return url;
@@ -28,7 +28,17 @@ public record GithubRepositoryResponse(
     }
 
     @Override
-    public String getDifference(LinkInfo supplier) throws IllegalArgumentException {
+    public String serializeToJson() {
+        return """
+        {
+            "full_name": "%s",
+            "updated_at": "%s",
+            "html_url": "%s"
+        }""".formatted(fullName, lastUpdated, url);
+    }
+
+    @Override
+    public String retrieveEvents(LinkApiResponse supplier) throws IllegalArgumentException {
         if (supplier.getClass() != getClass()) {
             throw new IllegalArgumentException();
         }

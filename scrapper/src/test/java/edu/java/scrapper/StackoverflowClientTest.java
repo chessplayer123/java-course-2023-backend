@@ -3,7 +3,7 @@ package edu.java.scrapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.client.api.stackoverflow.StackoverflowClient;
 import edu.java.client.api.stackoverflow.StackoverflowQuestionHandler;
-import edu.java.response.LinkInfo;
+import edu.java.response.LinkApiResponse;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,7 +41,7 @@ public class StackoverflowClientTest extends AbstractTest {
             )
         );
 
-        LinkInfo response = stackoverflowClient.fetch(URI.create(
+        LinkApiResponse response = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/32126613/c-equivalent-of-rusts-resultt-e-type"
         ));
 
@@ -71,14 +71,14 @@ public class StackoverflowClientTest extends AbstractTest {
             )
         );
 
-        LinkInfo prevResponse = stackoverflowClient.fetch(URI.create(
+        LinkApiResponse prevResponse = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/32126613/c-equivalent-of-rusts-resultt-e-type"
         ));
-        LinkInfo newResponse = stackoverflowClient.fetch(URI.create(
+        LinkApiResponse newResponse = stackoverflowClient.fetch(URI.create(
             "https://stackoverflow.com/questions/56016409/how-to-exclude-certain-classes-from-being-included-in-the-code-coverage-java"
         ));
 
-        String actualDifference = newResponse.getDifference(prevResponse);
+        String actualDifference = newResponse.retrieveEvents(prevResponse);
         String expectedDifference = """
             StackOverflow questions changes:
             + Title changed: 'C++ equivalent of Rust's Result<T, E> type?' -> 'How to exclude certain classes from being included in the code coverage? (Java)'

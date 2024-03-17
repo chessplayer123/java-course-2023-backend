@@ -1,7 +1,7 @@
 package edu.java.client.api.stackoverflow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import edu.java.response.LinkInfo;
+import edu.java.response.LinkApiResponse;
 import java.net.URI;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -9,7 +9,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
-public class StackoverflowQuestionResponse implements LinkInfo {
+public class StackoverflowQuestionResponse implements LinkApiResponse {
     private final String title;
     private final URI url;
     private final OffsetDateTime lastUpdated;
@@ -40,7 +40,19 @@ public class StackoverflowQuestionResponse implements LinkInfo {
     }
 
     @Override
-    public String getDifference(LinkInfo supplier) throws IllegalArgumentException {
+    public String serializeToJson() {
+        return """
+        {
+            "items": {
+                "title": "%s",
+                "link": "%s",
+                "last_activity_date": "%s"
+            }
+        }""".formatted(title, url, lastUpdated);
+    }
+
+    @Override
+    public String retrieveEvents(LinkApiResponse supplier) throws IllegalArgumentException {
         if (supplier.getClass() != getClass()) {
             throw new IllegalArgumentException();
         }

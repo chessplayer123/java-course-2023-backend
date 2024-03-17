@@ -1,12 +1,12 @@
 package edu.java.handlers;
 
 import edu.java.dto.response.ApiErrorResponse;
+import edu.java.exceptions.ChatIsNotRegisteredException;
 import edu.java.exceptions.InvalidLinkException;
 import edu.java.exceptions.LinkIsNotPresentException;
 import edu.java.exceptions.LinkIsNotSupportedException;
 import edu.java.exceptions.ReAddingLinkException;
 import edu.java.exceptions.ReAddingUserException;
-import edu.java.exceptions.UserIsNotRegisteredException;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,8 +21,8 @@ public class ControllerExceptionHandler {
             .toList();
     }
 
-    @ExceptionHandler(UserIsNotRegisteredException.class)
-    public ApiErrorResponse userIsNotRegistered(UserIsNotRegisteredException exception) {
+    @ExceptionHandler(ChatIsNotRegisteredException.class)
+    public ApiErrorResponse userIsNotRegistered(ChatIsNotRegisteredException exception) {
         return new ApiErrorResponse(
             exception.getDescription(),
             "401",
