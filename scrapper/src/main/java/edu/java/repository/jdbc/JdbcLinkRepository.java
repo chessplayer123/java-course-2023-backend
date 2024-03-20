@@ -2,7 +2,6 @@ package edu.java.repository.jdbc;
 
 import edu.java.repository.LinkRepository;
 import edu.java.repository.dto.Link;
-import java.net.URI;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
