@@ -14,9 +14,9 @@ public class JooqChatRepository implements ChatRepository {
     private final DSLContext dslContext;
 
     @Override
-    public void add(Long chatId) {
-        dslContext.insertInto(CHAT, CHAT.ID)
-            .values(chatId)
+    public void add(Chat chat) {
+        dslContext.insertInto(CHAT)
+            .values(chat)
             .execute();
     }
 

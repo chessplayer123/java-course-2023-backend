@@ -6,6 +6,7 @@ import edu.java.repository.ChatRepository;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.SubscriptionRepository;
 import edu.java.repository.dto.Chat;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +21,7 @@ public class DefaultChatService implements ChatService {
         if (chatRepository.findById(chatId).isPresent()) {
             throw new ReAddingUserException();
         }
-        chatRepository.add(chatId);
+        chatRepository.add(new Chat(chatId, OffsetDateTime.now()));
     }
 
     @Override
@@ -34,6 +35,6 @@ public class DefaultChatService implements ChatService {
 
     @Override
     public List<Chat> findChatsTrackingLink(Long linkId) {
-        return subscriptionRepository.findAllSubscribers(linkId).stream().toList();
+        return subscriptionRepository.findByLinkId(linkId).stream().toList();
     }
 }

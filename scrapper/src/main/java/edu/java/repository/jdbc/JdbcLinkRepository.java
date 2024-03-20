@@ -19,10 +19,10 @@ public class JdbcLinkRepository implements LinkRepository {
     private final JdbcClient jdbcClient;
 
     @Override
-    public Long add(URI url, String description) {
+    public Long add(Link link) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcClient.sql("INSERT INTO link (url, description) VALUES(?, ?);")
-            .params(url.toString(), description)
+        jdbcClient.sql("INSERT INTO link (url, description, created_at, last_check_time) VALUES(?, ?, ?, ?);")
+            .params(link.url().toString(), link.description(), link.createdAt(), link.lastCheckTime())
             .update(keyHolder, "id");
         return keyHolder.getKeyAs(Long.class);
     }
@@ -31,13 +31,13 @@ public class JdbcLinkRepository implements LinkRepository {
     public void remove(Long linkId) {
         jdbcClient.sql("DELETE FROM link WHERE id = :id;")
             .param("id", linkId)
-            .query();
+            .update();
     }
 
     @Override
     public void update(Long linkId, OffsetDateTime updateTime) {
-        jdbcClient.sql("UPDATE link SET last_check_time = ? WHERE id = ?")
-            .params(updateTime.toString(), linkId)
+        jdbcClient.sql("UPDATE link SET last_check_time = ? WHERE id = ?;")
+            .params(updateTime, linkId)
             .update();
     }
 
@@ -53,19 +53,6 @@ public class JdbcLinkRepository implements LinkRepository {
             .param("url", url)
             .query(Link.class)
             .optional();
-    }
-
-    @Override
-    public List<Link> findByChat(Long chatId) {
-        return jdbcClient.sql("""
-            SELECT * FROM link
-            JOIN subscription ON
-                chat_id = ?
-                and link.id = subscription.link_id;
-       """)
-            .params(chatId)
-            .query(Link.class)
-            .list();
     }
 
     @Override

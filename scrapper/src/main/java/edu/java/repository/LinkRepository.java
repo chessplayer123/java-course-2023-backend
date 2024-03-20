@@ -8,17 +8,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LinkRepository {
-    Long add(URI url, String description);
+    Long add(Link link);
 
     void remove(Long linkId);
 
     void update(Long linkId, OffsetDateTime updateTime);
 
-    void prune();
-
     Optional<Link> findByURL(String url);
 
-    List<Link> findByChat(Long chatId);
-
     List<Link> findLastCheckTimeExceedLimit(Duration limit);
+
+    void prune();
 }

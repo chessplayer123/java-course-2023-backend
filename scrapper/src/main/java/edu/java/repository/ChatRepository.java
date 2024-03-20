@@ -4,7 +4,7 @@ import edu.java.repository.dto.Chat;
 import java.util.Optional;
 
 public interface ChatRepository {
-    void add(Long chatId);
+    void add(Chat chat);
 
     void remove(Long chatId);
 

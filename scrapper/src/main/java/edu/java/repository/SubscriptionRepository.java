@@ -1,6 +1,7 @@
 package edu.java.repository;
 
 import edu.java.repository.dto.Chat;
+import edu.java.repository.dto.Link;
 import edu.java.repository.dto.Subscription;
 import java.util.List;
 import java.util.Optional;
@@ -12,5 +13,7 @@ public interface SubscriptionRepository {
 
     Optional<Subscription> findSubscription(Long chatId, Long linkId);
 
-    List<Chat> findAllSubscribers(Long linkId);
+    List<Chat> findByLinkId(Long linkId);
+
+    List<Link> findByChatId(Long chatId);
 }

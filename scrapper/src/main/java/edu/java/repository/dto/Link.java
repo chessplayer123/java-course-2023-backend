@@ -10,4 +10,12 @@ public record Link(
     OffsetDateTime createdAt,
     OffsetDateTime lastCheckTime
 ) {
+    public static Link from(
+        URI url,
+        String description,
+        OffsetDateTime createdAt,
+        OffsetDateTime lastCheckTime
+    ) {
+        return new Link(null, url, description, createdAt, lastCheckTime);
+    }
 }

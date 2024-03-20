@@ -19,9 +19,9 @@ public class JooqLinkRepository implements LinkRepository {
     private final DSLContext dslContext;
 
     @Override
-    public Long add(URI url, String description) {
-        return dslContext.insertInto(LINK, LINK.URL, LINK.DESCRIPTION)
-            .values(url.toString(), description)
+    public Long add(Link link) {
+        return dslContext.insertInto(LINK, LINK.URL, LINK.DESCRIPTION, LINK.CREATED_AT, LINK.LAST_CHECK_TIME)
+            .values(link.url().toString(), link.description(), link.createdAt(), link.lastCheckTime())
             .returning(LINK.ID)
             .fetchOneInto(Long.class);
     }
@@ -57,16 +57,6 @@ public class JooqLinkRepository implements LinkRepository {
             .from(LINK)
             .where(LINK.URL.equal(url))
             .fetchOptionalInto(Link.class);
-    }
-
-    @Override
-    public List<Link> findByChat(Long chatId) {
-        return dslContext.select(LINK.fields())
-            .from(LINK)
-            .join(SUBSCRIPTION)
-            .on(SUBSCRIPTION.CHAT_ID.equal(chatId))
-            .and(SUBSCRIPTION.LINK_ID.equal(LINK.ID))
-            .fetchInto(Link.class);
     }
 
     @Override

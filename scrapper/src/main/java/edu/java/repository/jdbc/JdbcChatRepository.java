@@ -13,9 +13,9 @@ public class JdbcChatRepository implements ChatRepository {
     private final JdbcClient jdbcClient;
 
     @Override
-    public void add(Long chatId) {
-        jdbcClient.sql("INSERT INTO chat(id) VALUES(?);")
-            .params(chatId)
+    public void add(Chat chat) {
+        jdbcClient.sql("INSERT INTO chat(id, registered_at) VALUES(?, ?);")
+            .params(chat.id(), chat.registeredAt())
             .update();
     }
 

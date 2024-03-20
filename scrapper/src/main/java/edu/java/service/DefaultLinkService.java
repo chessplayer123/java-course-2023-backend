@@ -40,7 +40,9 @@ public class DefaultLinkService implements LinkService {
             return link.id();
         }
 
-        Long addedLinkId = linkRepository.add(url, description);
+        OffsetDateTime currentTime = OffsetDateTime.now();
+        Link addedLink = Link.from(url, description, currentTime, currentTime);
+        Long addedLinkId = linkRepository.add(addedLink);
         subscriptionRepository.add(chatId, addedLinkId);
         return addedLinkId;
     }
@@ -68,7 +70,7 @@ public class DefaultLinkService implements LinkService {
         if (chatRepository.findById(chatId).isEmpty()) {
             throw new ChatIsNotRegisteredException();
         }
-        return linkRepository.findByChat(chatId);
+        return subscriptionRepository.findByChatId(chatId);
     }
 
     @Override
