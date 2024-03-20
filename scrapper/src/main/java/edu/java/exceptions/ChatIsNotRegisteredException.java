@@ -1,11 +1,10 @@
 package edu.java.exceptions;
 
-public class ChatIsNotRegisteredException extends Exception {
-    public ChatIsNotRegisteredException() {
-        super("Chat is not registered");
-    }
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-    public String getDescription() {
-        return "You are not registered";
+public class ChatIsNotRegisteredException extends ResponseStatusException {
+    public ChatIsNotRegisteredException() {
+        super(HttpStatus.UNAUTHORIZED, "You are not registered");
     }
 }

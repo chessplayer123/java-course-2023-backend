@@ -2,7 +2,7 @@ package edu.java.scrapper;
 
 import edu.java.client.api.ApiClient;
 import edu.java.controller.LinksController;
-import edu.java.link.LinkProcessor;
+import edu.java.processor.LinkProcessor;
 import edu.java.response.LinkApiResponse;
 import edu.java.repository.dto.Link;
 import edu.java.service.LinkService;
@@ -40,12 +40,13 @@ public class LinksControllerTest  {
         Long chatId = 123L;
         ApiClient client = Mockito.mock(ApiClient.class);
         LinkApiResponse info = Mockito.mock(LinkApiResponse.class);
+        String linkSummary = "Test summary";
         Long expectedLinkId = 0L;
 
+        Mockito.when(info.getSummary()).thenReturn(linkSummary);
         Mockito.when(processor.findClient(url)).thenReturn(client);
         Mockito.when(client.fetch(url)).thenReturn(info);
-        Mockito.when(service.track(chatId, info)).thenReturn(expectedLinkId);
-        Mockito.when(info.getLink()).thenReturn(url);
+        Mockito.when(service.track(chatId, url, linkSummary)).thenReturn(expectedLinkId);
 
         mockMvc.perform(post("/links")
                 .header("Tg-Chat-Id", String.valueOf(chatId))
@@ -65,7 +66,7 @@ public class LinksControllerTest  {
 
         Mockito
             .verify(service)
-            .track(chatId, info);
+            .track(chatId, url, linkSummary);
     }
 
     @Test
@@ -73,10 +74,8 @@ public class LinksControllerTest  {
     public void untrackLinkShouldCallLinkServiceMethod() {
         URI url = URI.create("https://stackoverflow.com");
         Long chatId = 123L;
-        LinkApiResponse info = Mockito.mock(LinkApiResponse.class);
         Long removedLinkId = 10L;
 
-        Mockito.when(info.getLink()).thenReturn(url);
         Mockito.when(service.untrack(chatId, url)).thenReturn(removedLinkId);
 
         mockMvc.perform(delete("/links")

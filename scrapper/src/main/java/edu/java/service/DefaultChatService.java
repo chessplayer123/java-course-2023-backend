@@ -17,7 +17,7 @@ public class DefaultChatService implements ChatService {
 
     @Override
     public void register(Long chatId) throws ReAddingUserException {
-        if (chatRepository.contains(chatId)) {
+        if (chatRepository.findById(chatId).isPresent()) {
             throw new ReAddingUserException();
         }
         chatRepository.add(chatId);
@@ -25,7 +25,7 @@ public class DefaultChatService implements ChatService {
 
     @Override
     public void unregister(Long chatId) throws ChatIsNotRegisteredException {
-        if (!chatRepository.contains(chatId)) {
+        if (!chatRepository.findById(chatId).isPresent()) {
             throw new ChatIsNotRegisteredException();
         }
         chatRepository.remove(chatId);

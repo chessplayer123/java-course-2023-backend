@@ -6,7 +6,7 @@ import edu.java.dto.request.UntrackLinkRequest;
 import edu.java.dto.response.ApiErrorResponse;
 import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinkResponse;
-import edu.java.link.LinkProcessor;
+import edu.java.processor.LinkProcessor;
 import edu.java.response.LinkApiResponse;
 import edu.java.service.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -88,7 +88,7 @@ public class LinksController {
         URI link = URI.create(request.link());
         ApiClient client = processor.findClient(link);
         LinkApiResponse response = client.fetch(link);
-        Long addedLinkId = service.track(chatId, response);
+        Long addedLinkId = service.track(chatId, link, response.getSummary());
         return new LinkResponse(addedLinkId, link);
     }
 

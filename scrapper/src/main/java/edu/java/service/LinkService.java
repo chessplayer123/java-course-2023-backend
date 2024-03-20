@@ -4,7 +4,6 @@ import edu.java.exceptions.ChatIsNotRegisteredException;
 import edu.java.exceptions.LinkIsNotPresentException;
 import edu.java.exceptions.ReAddingLinkException;
 import edu.java.repository.dto.Link;
-import edu.java.response.LinkApiResponse;
 import java.net.URI;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -13,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface LinkService {
     @Transactional
-    Long track(Long chatId, LinkApiResponse info) throws ReAddingLinkException, ChatIsNotRegisteredException;
+    Long track(Long chatId, URI info, String description) throws ReAddingLinkException, ChatIsNotRegisteredException;
 
     @Transactional
     Long untrack(Long chatId, URI url) throws ChatIsNotRegisteredException, LinkIsNotPresentException;
@@ -22,11 +21,11 @@ public interface LinkService {
     Collection<Link> listAll(Long chatId) throws ChatIsNotRegisteredException;
 
     @Transactional
-    void update(Long linkId, LinkApiResponse updatedInfo, OffsetDateTime updateTime);
+    void update(Long linkId, OffsetDateTime updateTime) throws LinkIsNotPresentException;
 
     Collection<Link> getLinksCheckTimeExceedLimit(Duration limit);
 
-    default void updateNow(Long linkId, LinkApiResponse updatedInfo) {
-        update(linkId, updatedInfo, OffsetDateTime.now());
+    default void updateNow(Long linkId) throws LinkIsNotPresentException {
+        update(linkId, OffsetDateTime.now());
     }
 }

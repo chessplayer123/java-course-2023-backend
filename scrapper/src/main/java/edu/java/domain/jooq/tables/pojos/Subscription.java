@@ -4,7 +4,6 @@
 
 package edu.java.domain.jooq.tables.pojos;
 
-
 import java.beans.ConstructorProperties;
 import java.io.Serializable;
 import javax.annotation.processing.Generated;

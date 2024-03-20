@@ -1,20 +1,19 @@
 package edu.java.scheduler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.java.client.api.ApiClient;
+import edu.java.client.api.LinkUpdateEvent;
 import edu.java.client.updates.UpdatesClient;
 import edu.java.dto.request.LinkUpdate;
-import edu.java.exceptions.InvalidLinkException;
-import edu.java.exceptions.LinkIsNotSupportedException;
-import edu.java.link.LinkProcessor;
+import edu.java.processor.LinkProcessor;
 import edu.java.repository.dto.Chat;
 import edu.java.repository.dto.Link;
-import edu.java.response.LinkApiResponse;
 import edu.java.service.ChatService;
 import edu.java.service.LinkService;
 import java.time.Duration;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,24 +29,46 @@ public class LinkUpdaterScheduler {
     private final ChatService chatService;
     private final LinkProcessor linkProcessor;
 
+    private String formatUpdate(LinkUpdateEvent update) {
+        return "Link %s was updated at %s:\n%s".formatted(
+            update.link(),
+            update.date(),
+            update.description()
+        );
+    }
+
+    @SneakyThrows
+    private void updateLink(Link link) {
+        ApiClient client = linkProcessor.findClient(link.url());
+        List<LinkUpdateEvent> updates = client.retrieveUpdates(link.url(), link.lastCheckTime());
+//        linkService.updateNow(link.id());
+
+        if (updates.isEmpty()) {
+            return;
+        }
+
+        List<Long> subscribers = chatService.findChatsTrackingLink(link.id())
+            .stream()
+            .map(Chat::id)
+            .toList();
+
+        String message = updates.stream()
+            .map(this::formatUpdate)
+            .collect(Collectors.joining("\n"));
+
+        updatesClient.sendLinkUpdate(new LinkUpdate(
+            link.id(),
+            link.url(),
+            message,
+            subscribers
+        ));
+    }
+
     @Scheduled(fixedDelayString = "#{@schedulerIntervalMs}")
-    void update() {
+    public void update() {
         log.info("Starting update");
         for (Link link : linkService.getLinksCheckTimeExceedLimit(Duration.ofMinutes(1))) {
-            try {
-                ApiClient client = linkProcessor.findClient(link.url());
-                LinkApiResponse updatedResponse = client.fetch(link.url());
-                LinkApiResponse prevResponse = updatedResponse.deserializeFromJson(link.data());
-                String events = updatedResponse.retrieveEvents(prevResponse);
-                if (events != null) {
-                    List<Long> subscribers = chatService.findChatsTrackingLink(link.id())
-                        .stream()
-                        .map(Chat::id)
-                        .toList();
-                    updatesClient.sendLinkUpdate(new LinkUpdate(link.id(), link.url(), events, subscribers));
-                }
-            } catch (LinkIsNotSupportedException | InvalidLinkException | JsonProcessingException ignored) {
-            }
+//            updateLink(link);
         }
         log.info("Update ended");
     }

@@ -1,6 +1,8 @@
 package edu.java.repository.jdbc;
 
 import edu.java.repository.ChatRepository;
+import edu.java.repository.dto.Chat;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
@@ -25,11 +27,10 @@ public class JdbcChatRepository implements ChatRepository {
     }
 
     @Override
-    public boolean contains(Long chatId) {
-        return jdbcClient.sql("SELECT id FROM chat WHERE id = :id;")
+    public Optional<Chat> findById(Long chatId) {
+        return jdbcClient.sql("SELECT * FROM chat WHERE id = :id;")
             .param("id", chatId)
-            .query((rs, rowNum) -> rs.getLong(1))
-            .optional()
-            .isPresent();
+            .query(Chat.class)
+            .optional();
     }
 }

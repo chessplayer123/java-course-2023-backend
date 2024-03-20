@@ -1,4 +1,4 @@
-package edu.java.scrapper;
+package edu.java.scrapper.client;
 
 import lombok.SneakyThrows;
 import java.nio.file.Files;

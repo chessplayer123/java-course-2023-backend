@@ -2,7 +2,7 @@ package edu.java.repository.jdbc;
 
 import edu.java.repository.LinkRepository;
 import edu.java.repository.dto.Link;
-import edu.java.response.LinkApiResponse;
+import java.net.URI;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -19,10 +19,10 @@ public class JdbcLinkRepository implements LinkRepository {
     private final JdbcClient jdbcClient;
 
     @Override
-    public Long add(LinkApiResponse info) {
+    public Long add(URI url, String description) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcClient.sql("INSERT INTO link (url, data) VALUES(?, ?::json);")
-            .params(info.getLink().toString(), info.serializeToJson())
+        jdbcClient.sql("INSERT INTO link (url, description) VALUES(?, ?);")
+            .params(url.toString(), description)
             .update(keyHolder, "id");
         return keyHolder.getKeyAs(Long.class);
     }
@@ -35,9 +35,9 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public void update(Long linkId, LinkApiResponse info, OffsetDateTime updateTime) {
-        jdbcClient.sql("UPDATE link SET data = ?, last_check_time = ?")
-            .params(info.serializeToJson(), updateTime.toString())
+    public void update(Long linkId, OffsetDateTime updateTime) {
+        jdbcClient.sql("UPDATE link SET last_check_time = ? WHERE id = ?")
+            .params(updateTime.toString(), linkId)
             .update();
     }
 

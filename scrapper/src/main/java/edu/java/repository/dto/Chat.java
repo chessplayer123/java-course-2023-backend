@@ -4,6 +4,6 @@ import java.time.OffsetDateTime;
 
 public record Chat(
     Long id,
-    OffsetDateTime registrationTime
+    OffsetDateTime registeredAt
 ) {
 }

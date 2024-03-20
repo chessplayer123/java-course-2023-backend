@@ -1,6 +1,8 @@
 package edu.java.repository.jooq;
 
 import edu.java.repository.ChatRepository;
+import edu.java.repository.dto.Chat;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -26,10 +28,9 @@ public class JooqChatRepository implements ChatRepository {
     }
 
     @Override
-    public boolean contains(Long chatId) {
+    public Optional<Chat> findById(Long chatId) {
         return dslContext.selectFrom(CHAT)
             .where(CHAT.ID.equal(chatId))
-            .fetchOptional()
-            .isPresent();
+            .fetchOptionalInto(Chat.class);
     }
 }

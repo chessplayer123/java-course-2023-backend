@@ -1,9 +1,9 @@
 package edu.java.configuration;
 
 import edu.java.client.api.github.GithubClient;
-import edu.java.client.api.github.GithubLinkHandler;
+import edu.java.client.api.github.handlers.GithubLinkHandler;
 import edu.java.client.api.stackoverflow.StackoverflowClient;
-import edu.java.client.api.stackoverflow.StackoverflowLinkHandler;
+import edu.java.client.api.stackoverflow.handlers.StackoverflowLinkHandler;
 import edu.java.client.updates.UpdatesClient;
 import java.util.List;
 import org.springframework.context.annotation.Bean;

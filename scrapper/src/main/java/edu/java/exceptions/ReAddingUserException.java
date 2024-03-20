@@ -1,11 +1,10 @@
 package edu.java.exceptions;
 
-public class ReAddingUserException extends Exception {
-    public ReAddingUserException() {
-        super("Attempting to re-add already registered user");
-    }
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-    public String getDescription() {
-        return "You are already registered";
+public class ReAddingUserException extends ResponseStatusException {
+    public ReAddingUserException() {
+        super(HttpStatus.CONFLICT, "You are already registered");
     }
 }

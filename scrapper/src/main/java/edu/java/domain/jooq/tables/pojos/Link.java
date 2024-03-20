@@ -4,14 +4,12 @@
 
 package edu.java.domain.jooq.tables.pojos;
 
-
 import java.beans.ConstructorProperties;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import javax.annotation.processing.Generated;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jooq.JSONB;
 
 
 /**
@@ -31,7 +29,7 @@ public class Link implements Serializable {
 
     private Long id;
     private String url;
-    private JSONB data;
+    private String description;
     private OffsetDateTime createdAt;
     private OffsetDateTime lastCheckTime;
 
@@ -40,22 +38,22 @@ public class Link implements Serializable {
     public Link(Link value) {
         this.id = value.id;
         this.url = value.url;
-        this.data = value.data;
+        this.description = value.description;
         this.createdAt = value.createdAt;
         this.lastCheckTime = value.lastCheckTime;
     }
 
-    @ConstructorProperties({ "id", "url", "data", "createdAt", "lastCheckTime" })
+    @ConstructorProperties({ "id", "url", "description", "createdAt", "lastCheckTime" })
     public Link(
         @Nullable Long id,
         @NotNull String url,
-        @Nullable JSONB data,
+        @NotNull String description,
         @Nullable OffsetDateTime createdAt,
         @Nullable OffsetDateTime lastCheckTime
     ) {
         this.id = id;
         this.url = url;
-        this.data = data;
+        this.description = description;
         this.createdAt = createdAt;
         this.lastCheckTime = lastCheckTime;
     }
@@ -92,18 +90,19 @@ public class Link implements Serializable {
     }
 
     /**
-     * Getter for <code>public.link.data</code>.
+     * Getter for <code>public.link.description</code>.
      */
-    @Nullable
-    public JSONB getData() {
-        return this.data;
+    @jakarta.validation.constraints.NotNull
+    @NotNull
+    public String getDescription() {
+        return this.description;
     }
 
     /**
-     * Setter for <code>public.link.data</code>.
+     * Setter for <code>public.link.description</code>.
      */
-    public void setData(@Nullable JSONB data) {
-        this.data = data;
+    public void setDescription(@NotNull String description) {
+        this.description = description;
     }
 
     /**
@@ -157,11 +156,11 @@ public class Link implements Serializable {
         }
         else if (!this.url.equals(other.url))
             return false;
-        if (this.data == null) {
-            if (other.data != null)
+        if (this.description == null) {
+            if (other.description != null)
                 return false;
         }
-        else if (!this.data.equals(other.data))
+        else if (!this.description.equals(other.description))
             return false;
         if (this.createdAt == null) {
             if (other.createdAt != null)
@@ -184,7 +183,7 @@ public class Link implements Serializable {
         int result = 1;
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         result = prime * result + ((this.url == null) ? 0 : this.url.hashCode());
-        result = prime * result + ((this.data == null) ? 0 : this.data.hashCode());
+        result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
         result = prime * result + ((this.createdAt == null) ? 0 : this.createdAt.hashCode());
         result = prime * result + ((this.lastCheckTime == null) ? 0 : this.lastCheckTime.hashCode());
         return result;
@@ -196,7 +195,7 @@ public class Link implements Serializable {
 
         sb.append(id);
         sb.append(", ").append(url);
-        sb.append(", ").append(data);
+        sb.append(", ").append(description);
         sb.append(", ").append(createdAt);
         sb.append(", ").append(lastCheckTime);
 

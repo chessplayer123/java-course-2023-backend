@@ -7,7 +7,6 @@ import edu.java.repository.ChatRepository;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.SubscriptionRepository;
 import edu.java.repository.dto.Link;
-import edu.java.response.LinkApiResponse;
 import java.net.URI;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -22,57 +21,59 @@ public class DefaultLinkService implements LinkService {
     private final ChatRepository chatRepository;
 
     @Override
-    public Long track(Long chatId, LinkApiResponse info) throws ReAddingLinkException, ChatIsNotRegisteredException {
-        if (!chatRepository.contains(chatId)) {
+    public Long track(
+        Long chatId,
+        URI url,
+        String description
+    ) throws ReAddingLinkException, ChatIsNotRegisteredException {
+        if (chatRepository.findById(chatId).isEmpty()) {
             throw new ChatIsNotRegisteredException();
         }
 
-        Optional<Link> presentLink = linkRepository.findByURL(info.getLink().toString());
+        Optional<Link> presentLink = linkRepository.findByURL(url.toString());
         if (presentLink.isPresent()) {
             Link link = presentLink.get();
-            if (subscriptionRepository.isLinkTrackedByChat(chatId, link.id())) {
+            if (subscriptionRepository.findSubscription(chatId, link.id()).isPresent()) {
                 throw new ReAddingLinkException();
             }
             subscriptionRepository.add(chatId, link.id());
             return link.id();
         }
 
-        Long addedLinkId = linkRepository.add(info);
+        Long addedLinkId = linkRepository.add(url, description);
         subscriptionRepository.add(chatId, addedLinkId);
         return addedLinkId;
     }
 
     @Override
     public Long untrack(Long chatId, URI url) throws ChatIsNotRegisteredException, LinkIsNotPresentException {
-        if (!chatRepository.contains(chatId)) {
+        if (chatRepository.findById(chatId).isEmpty()) {
             throw new ChatIsNotRegisteredException();
         }
 
         Link trackedLink = linkRepository
             .findByURL(url.toString())
             .orElseThrow(LinkIsNotPresentException::new);
-        if (!subscriptionRepository.isLinkTrackedByChat(chatId, trackedLink.id())) {
+        if (subscriptionRepository.findSubscription(chatId, trackedLink.id()).isEmpty()) {
             throw new LinkIsNotPresentException();
         }
 
         subscriptionRepository.remove(chatId, trackedLink.id());
-        if (!subscriptionRepository.isAnyChatTrackingLink(trackedLink.id())) {
-            linkRepository.remove(trackedLink.id());
-        }
+        linkRepository.prune();
         return trackedLink.id();
     }
 
     @Override
     public Collection<Link> listAll(Long chatId) throws ChatIsNotRegisteredException {
-        if (!chatRepository.contains(chatId)) {
+        if (chatRepository.findById(chatId).isEmpty()) {
             throw new ChatIsNotRegisteredException();
         }
         return linkRepository.findByChat(chatId);
     }
 
     @Override
-    public void update(Long linkId, LinkApiResponse updatedInfo, OffsetDateTime updateTime) {
-        linkRepository.update(linkId, updatedInfo, updateTime);
+    public void update(Long linkId, OffsetDateTime updateTime) throws LinkIsNotPresentException {
+        linkRepository.update(linkId, updateTime);
     }
 
     @Override

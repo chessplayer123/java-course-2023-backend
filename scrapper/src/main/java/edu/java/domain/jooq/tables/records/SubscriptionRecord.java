@@ -4,7 +4,6 @@
 
 package edu.java.domain.jooq.tables.records;
 
-
 import edu.java.domain.jooq.tables.Subscription;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;

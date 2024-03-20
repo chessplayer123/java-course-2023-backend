@@ -1,11 +1,10 @@
 package edu.java.exceptions;
 
-public class ReAddingLinkException extends Exception {
-    public ReAddingLinkException() {
-        super("Attempting to re-add link to same user");
-    }
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-    public String getDescription() {
-        return "Link is already in your track list";
+public class ReAddingLinkException extends ResponseStatusException {
+    public ReAddingLinkException() {
+        super(HttpStatus.CONFLICT, "Link is already in your track list");
     }
 }

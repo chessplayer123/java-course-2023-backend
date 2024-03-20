@@ -1,4 +1,4 @@
-package edu.java.link;
+package edu.java.processor;
 
 import edu.java.client.api.ApiClient;
 import edu.java.exceptions.LinkIsNotSupportedException;

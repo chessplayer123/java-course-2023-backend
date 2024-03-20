@@ -2,7 +2,7 @@ package edu.java.repository.jooq;
 
 import edu.java.repository.LinkRepository;
 import edu.java.repository.dto.Link;
-import edu.java.response.LinkApiResponse;
+import java.net.URI;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -12,7 +12,6 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import static edu.java.domain.jooq.Tables.LINK;
 import static edu.java.domain.jooq.Tables.SUBSCRIPTION;
-import static org.jooq.JSONB.jsonb;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,9 +19,9 @@ public class JooqLinkRepository implements LinkRepository {
     private final DSLContext dslContext;
 
     @Override
-    public Long add(LinkApiResponse info) {
-        return dslContext.insertInto(LINK, LINK.URL, LINK.DATA)
-            .values(info.getLink().toString(), jsonb(info.serializeToJson()))
+    public Long add(URI url, String description) {
+        return dslContext.insertInto(LINK, LINK.URL, LINK.DESCRIPTION)
+            .values(url.toString(), description)
             .returning(LINK.ID)
             .fetchOneInto(Long.class);
     }
@@ -35,9 +34,8 @@ public class JooqLinkRepository implements LinkRepository {
     }
 
     @Override
-    public void update(Long linkId, LinkApiResponse info, OffsetDateTime updateTime) {
+    public void update(Long linkId, OffsetDateTime updateTime) {
         dslContext.update(LINK)
-            .set(LINK.DATA, jsonb(info.serializeToJson()))
             .set(LINK.LAST_CHECK_TIME, updateTime)
             .where(LINK.ID.equal(linkId))
             .execute();

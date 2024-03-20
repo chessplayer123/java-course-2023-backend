@@ -4,7 +4,6 @@
 
 package edu.java.domain.jooq.tables.records;
 
-
 import edu.java.domain.jooq.tables.Chat;
 import java.beans.ConstructorProperties;
 import java.time.OffsetDateTime;

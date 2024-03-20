@@ -2,7 +2,9 @@ package edu.java.repository.jooq;
 
 import edu.java.repository.SubscriptionRepository;
 import edu.java.repository.dto.Chat;
+import edu.java.repository.dto.Subscription;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -29,27 +31,18 @@ public class JooqSubscriptionRepository implements SubscriptionRepository {
     }
 
     @Override
+    public Optional<Subscription> findSubscription(Long chatId, Long linkId) {
+        return dslContext.selectFrom(SUBSCRIPTION)
+            .where(SUBSCRIPTION.LINK_ID.equal(linkId))
+            .and(SUBSCRIPTION.CHAT_ID.equal(chatId))
+            .fetchOptionalInto(Subscription.class);
+    }
+
+    @Override
     public List<Chat> findAllSubscribers(Long linkId) {
         return dslContext.select(SUBSCRIPTION.CHAT_ID)
             .from(SUBSCRIPTION)
             .where(SUBSCRIPTION.LINK_ID.equal(linkId))
             .fetchInto(Chat.class);
-    }
-
-    @Override
-    public boolean isLinkTrackedByChat(Long chatId, Long linkId) {
-        return dslContext.selectFrom(SUBSCRIPTION)
-            .where(SUBSCRIPTION.LINK_ID.equal(linkId))
-            .and(SUBSCRIPTION.CHAT_ID.equal(chatId))
-            .fetchOptional()
-            .isPresent();
-    }
-
-    @Override
-    public boolean isAnyChatTrackingLink(Long linkId) {
-        return dslContext.selectFrom(SUBSCRIPTION)
-            .where(SUBSCRIPTION.LINK_ID.equal(linkId))
-            .fetchOptional()
-            .isPresent();
     }
 }

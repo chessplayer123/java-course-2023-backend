@@ -4,7 +4,6 @@
 
 package edu.java.domain.jooq.tables;
 
-
 import edu.java.domain.jooq.Keys;
 import edu.java.domain.jooq.Public;
 import edu.java.domain.jooq.tables.records.SubscriptionRecord;

@@ -4,7 +4,6 @@
 
 package edu.java.domain.jooq;
 
-
 import edu.java.domain.jooq.tables.Chat;
 import edu.java.domain.jooq.tables.Link;
 import edu.java.domain.jooq.tables.Subscription;

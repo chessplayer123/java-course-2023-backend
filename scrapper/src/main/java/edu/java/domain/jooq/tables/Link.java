@@ -18,7 +18,6 @@ import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Function5;
 import org.jooq.Identity;
-import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
@@ -74,9 +73,9 @@ public class Link extends TableImpl<LinkRecord> {
     public final TableField<LinkRecord, String> URL = createField(DSL.name("url"), SQLDataType.CLOB.nullable(false), this, "");
 
     /**
-     * The column <code>public.link.data</code>.
+     * The column <code>public.link.description</code>.
      */
-    public final TableField<LinkRecord, JSONB> DATA = createField(DSL.name("data"), SQLDataType.JSONB, this, "");
+    public final TableField<LinkRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.CLOB.nullable(false), this, "");
 
     /**
      * The column <code>public.link.created_at</code>.
@@ -196,14 +195,14 @@ public class Link extends TableImpl<LinkRecord> {
 
     @Override
     @NotNull
-    public Row5<Long, String, JSONB, OffsetDateTime, OffsetDateTime> fieldsRow() {
+    public Row5<Long, String, String, OffsetDateTime, OffsetDateTime> fieldsRow() {
         return (Row5) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function5<? super Long, ? super String, ? super JSONB, ? super OffsetDateTime, ? super OffsetDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function5<? super Long, ? super String, ? super String, ? super OffsetDateTime, ? super OffsetDateTime, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -211,7 +210,7 @@ public class Link extends TableImpl<LinkRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super Long, ? super String, ? super JSONB, ? super OffsetDateTime, ? super OffsetDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super Long, ? super String, ? super String, ? super OffsetDateTime, ? super OffsetDateTime, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

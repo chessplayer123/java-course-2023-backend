@@ -9,8 +9,10 @@ import edu.java.exceptions.ReAddingLinkException;
 import edu.java.exceptions.ReAddingUserException;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 @SuppressWarnings("MultipleStringLiterals")
@@ -21,69 +23,45 @@ public class ControllerExceptionHandler {
             .toList();
     }
 
+    private <T extends ResponseStatusException> ResponseEntity<ApiErrorResponse> wrapException(T exception) {
+        return ResponseEntity
+            .status(exception.getStatusCode())
+            .body(new ApiErrorResponse(
+                exception.getReason(),
+                String.valueOf(exception.getStatusCode().value()),
+                exception.getClass().toString(),
+                exception.getStatusCode().toString(),
+                getStackStrace(exception)
+            ));
+    }
+
     @ExceptionHandler(ChatIsNotRegisteredException.class)
-    public ApiErrorResponse userIsNotRegistered(ChatIsNotRegisteredException exception) {
-        return new ApiErrorResponse(
-            exception.getDescription(),
-            "401",
-            exception.getClass().getName(),
-            exception.getMessage(),
-            getStackStrace(exception)
-        );
+    public ResponseEntity<ApiErrorResponse> userIsNotRegistered(ChatIsNotRegisteredException exception) {
+        return wrapException(exception);
     }
 
     @ExceptionHandler(ReAddingLinkException.class)
-    public ApiErrorResponse linkReAdding(ReAddingLinkException exception) {
-        return new ApiErrorResponse(
-            exception.getDescription(),
-            "409",
-            exception.getClass().getName(),
-            exception.getMessage(),
-            getStackStrace(exception)
-        );
+    public ResponseEntity<ApiErrorResponse> linkReAdding(ReAddingLinkException exception) {
+        return wrapException(exception);
     }
 
     @ExceptionHandler(ReAddingUserException.class)
-    public ApiErrorResponse userReAdding(ReAddingUserException exception) {
-        return new ApiErrorResponse(
-            exception.getDescription(),
-            "409",
-            exception.getClass().getName(),
-            exception.getMessage(),
-            getStackStrace(exception)
-        );
+    public ResponseEntity<ApiErrorResponse> userReAdding(ReAddingUserException exception) {
+        return wrapException(exception);
     }
 
     @ExceptionHandler(LinkIsNotPresentException.class)
-    public ApiErrorResponse linkIsNotPresent(LinkIsNotPresentException exception) {
-        return new ApiErrorResponse(
-            exception.getDescription(),
-            "404",
-            exception.getClass().getName(),
-            exception.getMessage(),
-            getStackStrace(exception)
-        );
+    public ResponseEntity<ApiErrorResponse> linkIsNotPresent(LinkIsNotPresentException exception) {
+        return wrapException(exception);
     }
 
     @ExceptionHandler(LinkIsNotSupportedException.class)
-    public ApiErrorResponse linkIsNotSupported(LinkIsNotSupportedException exception) {
-        return new ApiErrorResponse(
-            exception.getDescription(),
-            "400",
-            exception.getClass().getName(),
-            exception.getMessage(),
-            getStackStrace(exception)
-        );
+    public ResponseEntity<ApiErrorResponse> linkIsNotSupported(LinkIsNotSupportedException exception) {
+        return wrapException(exception);
     }
 
     @ExceptionHandler(InvalidLinkException.class)
-    public ApiErrorResponse linkIsNotValid(InvalidLinkException exception) {
-        return new ApiErrorResponse(
-            exception.getDescription(),
-            "400",
-            exception.getClass().getName(),
-            exception.getMessage(),
-            getStackStrace(exception)
-        );
+    public ResponseEntity<ApiErrorResponse> linkIsNotValid(InvalidLinkException exception) {
+        return wrapException(exception);
     }
 }

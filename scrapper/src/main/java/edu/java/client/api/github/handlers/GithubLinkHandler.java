@@ -1,4 +1,4 @@
-package edu.java.client.api.github;
+package edu.java.client.api.github.handlers;
 
 import edu.java.handlers.LinkHandler;
 
