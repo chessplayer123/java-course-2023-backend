@@ -3,7 +3,6 @@ package edu.java.bot.base;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import com.pengrad.telegrambot.response.SendResponse;
@@ -37,14 +36,12 @@ public class LinkTrackerBot implements Bot {
     }
 
     @Override
-    public void sendMessage(Long chatId, String message) throws TgChatBotException {
-        SendResponse response = telegramBot.execute(
-            new SendMessage(chatId, message).parseMode(ParseMode.HTML)
-        );
+    public void sendMessage(SendMessage sendMessage) throws TgChatBotException {
+        SendResponse response = telegramBot.execute(sendMessage);
         if (!response.isOk()) {
             throw new TgChatBotException(
                 response.description(),
-                "Can't send message to %d".formatted(chatId)
+                "Can't send message"
             );
         }
     }

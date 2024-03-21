@@ -1,8 +1,7 @@
 package edu.java.bot.controller;
 
-import edu.java.bot.base.Bot;
 import edu.java.bot.exceptions.TgChatBotException;
-import edu.java.bot.service.UserService;
+import edu.java.bot.service.NotificationService;
 import edu.java.dto.request.LinkUpdate;
 import edu.java.dto.response.ApiErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,8 +22,7 @@ import static edu.java.bot.controller.Mappings.UPDATES_MAPPING;
 @RequiredArgsConstructor
 @RequestMapping(UPDATES_MAPPING)
 public class UpdatesController {
-    private final UserService service;
-    private final Bot bot;
+    private final NotificationService notificationService;
 
     @Operation(summary = "Process notification about tracked link update")
     @ApiResponses(value = {
@@ -34,8 +32,10 @@ public class UpdatesController {
     })
     @PostMapping
     public void handleLinkUpdate(@RequestBody LinkUpdate update) throws TgChatBotException {
-        bot.sendNotifications(update.tgChatIds(), update.description());
+        log.info("New notification received");
 
-        log.info("Notifications were successfully processed");
+        notificationService.sendNotifications(update);
+
+        log.info("Notifications [{}] were successfully sent", update.tgChatIds().size());
     }
 }

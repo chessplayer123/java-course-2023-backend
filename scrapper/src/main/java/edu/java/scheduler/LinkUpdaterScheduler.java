@@ -4,6 +4,7 @@ import edu.java.client.api.ApiClient;
 import edu.java.client.api.LinkUpdateEvent;
 import edu.java.client.updates.UpdatesClient;
 import edu.java.dto.request.LinkUpdate;
+import edu.java.exceptions.LinkUpdateException;
 import edu.java.processor.LinkProcessor;
 import edu.java.repository.dto.Chat;
 import edu.java.repository.dto.Link;
@@ -11,9 +12,7 @@ import edu.java.service.ChatService;
 import edu.java.service.LinkService;
 import java.time.Duration;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -32,21 +31,12 @@ public class LinkUpdaterScheduler {
     private final LinkProcessor linkProcessor;
     private final Duration forceCheckDelay;
 
-    private String formatUpdate(LinkUpdateEvent update) {
-        return "Link %s was updated at %s:\n%s".formatted(
-            update.link(),
-            update.date(),
-            update.description()
-        );
-    }
-
-    @SneakyThrows
     private void updateLink(Link link) {
         ApiClient client = linkProcessor.findClient(link.url());
         List<LinkUpdateEvent> updates = client.retrieveUpdates(link.url(), link.lastCheckTime());
-        linkService.updateNow(link.id());
 
         if (updates.isEmpty()) {
+            linkService.updateNow(link.id());
             return;
         }
 
@@ -55,23 +45,27 @@ public class LinkUpdaterScheduler {
             .map(Chat::id)
             .toList();
 
-        String message = updates.stream()
-            .map(this::formatUpdate)
-            .collect(Collectors.joining("\n"));
-
-        updatesClient.sendLinkUpdate(new LinkUpdate(
-            link.id(),
-            link.url(),
-            message,
-            subscribers
-        ));
+        for (LinkUpdateEvent update : updates) {
+            updatesClient.sendLinkUpdate(new LinkUpdate(
+                link.id(),
+                link.url(),
+                update.date(),
+                update.description(),
+                subscribers
+            ));
+        }
+        linkService.updateNow(link.id());
     }
 
     @Scheduled(fixedDelayString = "#{@schedulerIntervalMs}")
     public void update() {
         log.info("Starting update");
         for (Link link : linkService.getLinksCheckTimeExceedLimit(forceCheckDelay)) {
-            updateLink(link);
+            try {
+                updateLink(link);
+            } catch (LinkUpdateException e) {
+                log.error("Can't send message due to: {}", e.getMessage());
+            }
         }
         log.info("Update ended");
     }
