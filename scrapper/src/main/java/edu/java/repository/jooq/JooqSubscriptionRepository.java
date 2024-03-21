@@ -9,6 +9,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
+import static edu.java.domain.jooq.Tables.CHAT;
 import static edu.java.domain.jooq.Tables.LINK;
 import static edu.java.domain.jooq.Tables.SUBSCRIPTION;
 
@@ -42,8 +43,10 @@ public class JooqSubscriptionRepository implements SubscriptionRepository {
 
     @Override
     public List<Chat> findByLinkId(Long linkId) {
-        return dslContext.select(SUBSCRIPTION.CHAT_ID)
-            .from(SUBSCRIPTION)
+        return dslContext.select(CHAT.fields())
+            .from(CHAT)
+            .join(SUBSCRIPTION)
+            .on(SUBSCRIPTION.CHAT_ID.equal(CHAT.ID))
             .where(SUBSCRIPTION.LINK_ID.equal(linkId))
             .fetchInto(Chat.class);
     }

@@ -21,7 +21,7 @@ public class JooqLinkRepository implements LinkRepository {
     public Long add(Link link) {
         return dslContext.insertInto(LINK, LINK.URL, LINK.DESCRIPTION, LINK.CREATED_AT, LINK.LAST_CHECK_TIME)
             .values(link.url().toString(), link.description(), link.createdAt(), link.lastCheckTime())
-            .returning(LINK.ID)
+            .returningResult(LINK.ID)
             .fetchOneInto(Long.class);
     }
 

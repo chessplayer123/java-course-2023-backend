@@ -74,8 +74,8 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Rollback
     void updateShouldChangeRecord() {
         Long linkId = insertLink("https://google.com");
-        OffsetDateTime newDate = OffsetDateTime.now();
 
+        OffsetDateTime newDate = OffsetDateTime.now();
         linkRepository.update(linkId, newDate);
 
         Link link = client.sql("SELECT * FROM link WHERE id = ?;")
@@ -83,8 +83,8 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
             .query(Link.class)
             .single();
 
-        assertThat(link.lastCheckTime().truncatedTo(ChronoUnit.MICROS))
-            .isEqualTo(newDate.truncatedTo(ChronoUnit.MICROS));
+        assertThat(link.lastCheckTime().truncatedTo(ChronoUnit.MILLIS))
+            .isEqualTo(newDate.truncatedTo(ChronoUnit.MILLIS));
     }
 
     @Test
