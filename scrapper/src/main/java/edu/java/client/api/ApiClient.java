@@ -26,7 +26,11 @@ public abstract class ApiClient {
         try {
             return webClient
                 .get()
-                .uri(endpoint.path())
+                .uri(builder -> builder
+                    .path(endpoint.path())
+                    .queryParams(endpoint.queryParams())
+                    .build()
+                )
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(endpoint.responseType())

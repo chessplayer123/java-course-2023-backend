@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
 @Component
+@SuppressWarnings("MultipleStringLiterals")
 public class StackoverflowQuestionHandler extends StackoverflowLinkHandler {
     private static final Pattern QUESTION_URL_PATTERN = Pattern.compile("https://stackoverflow.com/questions/(\\d+).*");
 
@@ -31,7 +32,8 @@ public class StackoverflowQuestionHandler extends StackoverflowLinkHandler {
         String questionId = matcher.group(1);
 
         return ApiEndpoint
-            .callTo("/questions/%s?site=stackoverflow".formatted(questionId))
+            .callTo("/questions/%s".formatted(questionId))
+            .withParam("site", "stackoverflow")
             .andReturn(StackoverflowQuestionResponse.class);
     }
 
@@ -45,14 +47,16 @@ public class StackoverflowQuestionHandler extends StackoverflowLinkHandler {
 
         return List.of(
             ApiEndpoint
-                .callTo("/questions/%s/answers?fromDate=%d&filter=withbody&site=stackoverflow"
-                    .formatted(questionId, fromDate.toEpochSecond())
-                )
+                .callTo("/questions/%s/answers", questionId)
+                .withParam("fromDate", String.valueOf(fromDate.toEpochSecond()))
+                .withParam("site", "stackoverflow")
+                .withParam("filter", "withbody")
                 .andReturn(StackoverflowAnswersResponse.class),
             ApiEndpoint
-                .callTo("/questions/%s/comments?fromDate=%d&filter=withbody&site=stackoverflow"
-                    .formatted(questionId, fromDate.toEpochSecond())
-                )
+                .callTo("/questions/%s/comments", questionId)
+                .withParam("fromDate", String.valueOf(fromDate.toEpochSecond()))
+                .withParam("site", "stackoverflow")
+                .withParam("filter", "withbody")
                 .andReturn(StackoverflowCommentsResponse.class)
         );
     }

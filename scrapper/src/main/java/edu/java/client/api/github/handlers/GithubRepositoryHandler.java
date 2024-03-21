@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
 @Component
+@SuppressWarnings("MultipleStringLiterals")
 public class GithubRepositoryHandler extends GithubLinkHandler {
     private static final Pattern REPOSITORY_URL_PATTERN = Pattern.compile("https://github.com/.+/.+");
 
@@ -27,10 +28,12 @@ public class GithubRepositoryHandler extends GithubLinkHandler {
     public List<ApiEndpoint<? extends LinkUpdateResponse>> retrieveUpdatesEndpoints(URI url, OffsetDateTime fromDate) {
         return List.of(
             ApiEndpoint
-                .callTo("/repos/%s/commits?since=%s".formatted(url.getPath(), fromDate))
+                .callTo("/repos%s/commits", url.getPath())
+                .withParam("since", fromDate.toString())
                 .andReturn(GithubCommitsResponse.class),
             ApiEndpoint
-                .callTo("/repos/%s/issues?since=%s".formatted(url.getPath(), fromDate))
+                .callTo("/repos%s/issues", url.getPath())
+                .withParam("since", fromDate.toString())
                 .andReturn(GithubIssuesResponse.class)
         );
     }

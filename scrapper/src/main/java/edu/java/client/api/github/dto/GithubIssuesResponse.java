@@ -2,6 +2,7 @@ package edu.java.client.api.github.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.java.client.api.LinkUpdateEvent;
 import edu.java.response.LinkUpdateResponse;
 import java.net.URI;
@@ -20,7 +21,7 @@ public record GithubIssuesResponse(@JsonIgnore List<Issue> issues) implements Li
             .toList();
     }
 
-    private record Issue(String title, User user, OffsetDateTime createdAt) {
+    private record Issue(String title, User user, @JsonProperty("created_at") OffsetDateTime createdAt) {
         @Override
         public String toString() {
             return "New issue by %s:\n%s".formatted(user.login, title);

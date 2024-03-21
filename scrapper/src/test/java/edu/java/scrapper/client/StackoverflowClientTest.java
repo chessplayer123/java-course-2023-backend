@@ -32,12 +32,12 @@ public class StackoverflowClientTest extends AbstractTest {
 
     @Test
     @SneakyThrows
-    public void obtainedSupplierReturnsExpectedSummaryForCorrectUrl() {
+    public void obtainedResponseReturnsExpectedSummaryForCorrectUrl() {
         server.stubFor(get(urlPathMatching("/questions/32126613"))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(jsonToString("src/test/resources/stackoverflow-response1.json"))
+                .withBody(jsonToString("src/test/resources/stackoverflow/stackoverflow-response.json"))
             )
         );
 
