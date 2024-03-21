@@ -1,7 +1,7 @@
 app:
   database-access-type: jdbc
   scheduler:
-    enable: true
+    enable: false
     interval: 10s
     force-check-delay: 10s
   api:

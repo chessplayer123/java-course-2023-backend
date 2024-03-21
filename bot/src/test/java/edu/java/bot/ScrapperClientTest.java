@@ -112,14 +112,15 @@ public class ScrapperClientTest {
                 .withBody("""
                 {
                     "id": 1,
-                    "url": "https://github.com"
+                    "url": "https://github.com",
+                    "description": "text"
                 }
                 """)
             )
         );
 
         LinkResponse actualResponse = client.addLink(0L, "https://github.com");
-        LinkResponse expectedResponse = new LinkResponse(1L, URI.create("https://github.com"));
+        LinkResponse expectedResponse = new LinkResponse(1L, URI.create("https://github.com"), "text");
 
         assertThat(actualResponse).isEqualTo(expectedResponse);
     }
@@ -152,14 +153,15 @@ public class ScrapperClientTest {
                 .withBody("""
                 {
                     "id": 123,
-                    "url": "https://github.com"
+                    "url": "https://github.com",
+                    "description": "link info"
                 }
                 """)
             )
         );
 
         LinkResponse actualResponse = client.deleteLink(0L, "https://github.com");
-        LinkResponse expectedResponse = new LinkResponse(123L, URI.create("https://github.com"));
+        LinkResponse expectedResponse = new LinkResponse(123L, URI.create("https://github.com"), "link info");
 
         assertThat(actualResponse).isEqualTo(expectedResponse);
     }
@@ -192,8 +194,8 @@ public class ScrapperClientTest {
                 .withBody("""
                 {
                     "links": [
-                        {"id": 0, "url": "https://github.com"},
-                        {"id": 1, "url": "https://stackoverflow.com"}
+                        {"id": 0, "url": "https://github.com", "description": "link info1"},
+                        {"id": 1, "url": "https://stackoverflow.com", "description": "link info2"}
                     ],
                     "size": 2
                 }
@@ -204,8 +206,8 @@ public class ScrapperClientTest {
         ListLinkResponse actualResponse = client.listLinks(0L);
         ListLinkResponse expectedResponse = new ListLinkResponse(
             List.of(
-                new LinkResponse(0L, URI.create("https://github.com")),
-                new LinkResponse(1L, URI.create("https://stackoverflow.com"))
+                new LinkResponse(0L, URI.create("https://github.com"), "link info1"),
+                new LinkResponse(1L, URI.create("https://stackoverflow.com"), "link info2")
             ),
             2
         );

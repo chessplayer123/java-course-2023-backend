@@ -12,6 +12,6 @@ public record GithubRepositoryResponse(
 ) implements LinkApiResponse {
     @Override
     public String getSummary() {
-        return "Github repository '%s' (%s)".formatted(fullName, url);
+        return "Github repository '%s'".formatted(fullName);
     }
 }

@@ -11,12 +11,14 @@ import edu.java.bot.commands.ListCommand;
 import edu.java.bot.commands.StartCommand;
 import edu.java.bot.commands.TrackCommand;
 import edu.java.bot.commands.UntrackCommand;
+import edu.java.dto.response.LinkResponse;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -80,13 +82,20 @@ public class CommandTest extends AbstractTest {
         Update update = mockUpdate(userId, "/list");
 
         Mockito.when(userService.getTrackedLinks(userId))
-            .thenReturn(List.of("Link 1", "Link 2"));
+            .thenReturn(List.of(
+                new LinkResponse(1L, URI.create("https://github.com"), "description 1"),
+                new LinkResponse(2L, URI.create("https://stackoverflow.com"), "description 2")
+            ));
 
         Map<String, Object> actualMessage = command.handle(update).getParameters();
 
         assertThat(actualMessage)
             .extracting("chat_id", "text")
-            .containsExactly(userId, "List of tracked links:\n1. Link 1\n2. Link 2\n");
+            .containsExactly(userId, """
+            List of tracked links:
+            1. description 1 [https://github.com]
+            2. description 2 [https://stackoverflow.com]
+            """);
     }
 
     @ParameterizedTest
@@ -140,18 +149,21 @@ public class CommandTest extends AbstractTest {
 
         Update variantUpdate = Mockito.mock(Update.class);
         Mockito.when(variantUpdate.message()).thenReturn(null);
+
         CallbackQuery callback = Mockito.mock(CallbackQuery.class);
         User user = Mockito.mock(User.class);
+
         Mockito.when(variantUpdate.callbackQuery()).thenReturn(callback);
-        Mockito.when(callback.data()).thenReturn("Link");
+        Mockito.when(callback.data()).thenReturn("0");
         Mockito.when(callback.from()).thenReturn(user);
         Mockito.when(user.id()).thenReturn(userId);
+        Mockito.when(userService.getTrackedLinks(userId))
+            .thenReturn(List.of(new LinkResponse(0L, URI.create("https://github.com"), "description")));
 
         command.handle(variantUpdate);
 
-        assertThatCode(() -> Mockito
+        Mockito
             .verify(userService)
-            .unTrackLink(userId, "Link")
-        ).doesNotThrowAnyException();
+            .unTrackLink(userId, "https://github.com");
     }
 }

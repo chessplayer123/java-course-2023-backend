@@ -2,6 +2,7 @@ package edu.java.bot.service;
 
 import edu.java.bot.client.scrapper.ScrapperClient;
 import edu.java.bot.exceptions.CommandException;
+import edu.java.dto.response.LinkResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 @RequiredArgsConstructor
 public class ScrapperUserService implements UserService {
     private static final CommandException SERVICE_IS_UNAVAILABLE = new CommandException(
-        "Bot service is unavailable now"
+        "The bot is temporary unavailable"
     );
 
     private final ScrapperClient client;
@@ -35,13 +36,9 @@ public class ScrapperUserService implements UserService {
     }
 
     @Override
-    public List<String> getTrackedLinks(Long chatId) throws CommandException {
+    public List<LinkResponse> getTrackedLinks(Long chatId) throws CommandException {
         try {
-            return client.listLinks(chatId)
-                .links()
-                .stream()
-                .map(linkResponse -> linkResponse.url().toString())
-                .toList();
+            return client.listLinks(chatId).links();
         } catch (WebClientRequestException e) {
             throw SERVICE_IS_UNAVAILABLE;
         }

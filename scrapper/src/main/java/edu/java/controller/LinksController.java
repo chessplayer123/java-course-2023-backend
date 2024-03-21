@@ -59,7 +59,7 @@ public class LinksController {
     ) {
         URI url = URI.create(request.link());
         Long trackedLinkId = service.untrack(chatId, url);
-        return new LinkResponse(trackedLinkId, url);
+        return new LinkResponse(trackedLinkId, url, null);
     }
 
     @Operation(summary = "Add link to tracking list")
@@ -88,8 +88,9 @@ public class LinksController {
         URI link = URI.create(request.link());
         ApiClient client = processor.findClient(link);
         LinkApiResponse response = client.fetch(link);
-        Long addedLinkId = service.track(chatId, link, response.getSummary());
-        return new LinkResponse(addedLinkId, link);
+        String description = response.getSummary();
+        Long addedLinkId = service.track(chatId, link, description);
+        return new LinkResponse(addedLinkId, link, description);
     }
 
     @Operation(summary = "Get all user's tracked links")
@@ -112,7 +113,7 @@ public class LinksController {
         List<LinkResponse> links = service
             .listAll(chatId)
             .stream()
-            .map(entry -> new LinkResponse(entry.id(), entry.url()))
+            .map(link -> new LinkResponse(link.id(), link.url(), link.description()))
             .toList();
         return new ListLinkResponse(links, links.size());
     }

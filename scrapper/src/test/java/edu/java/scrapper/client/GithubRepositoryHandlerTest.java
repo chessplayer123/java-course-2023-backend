@@ -52,7 +52,7 @@ public class GithubRepositoryHandlerTest extends AbstractTest {
         LinkApiResponse response = githubClient.fetch(URI.create("https://github.com/chessplayer123/java-course-2023-backend"));
 
         String actualSummary = response.getSummary();
-        String expectedSummary = "Github repository 'chessplayer123/java-course-2023-backend' (https://github.com/chessplayer123/java-course-2023-backend)";
+        String expectedSummary = "Github repository 'chessplayer123/java-course-2023-backend'";
 
         assertThat(actualSummary).isEqualTo(expectedSummary);
     }

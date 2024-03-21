@@ -27,8 +27,8 @@ public class LinkTrackerBot implements Bot {
             SendResponse response = telegramBot.execute(chatProcessor.process(update));
             if (!response.isOk()) {
                 log.warn(
-                    "Error occurred [code=%d], while trying to process '%s'"
-                        .formatted(response.errorCode(), update.message().text())
+                    "Error occurred (%s), while trying to process '%s'"
+                        .formatted(response.description(), update.message().text())
                 );
             }
         }
