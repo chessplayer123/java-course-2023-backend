@@ -14,6 +14,7 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
@@ -77,7 +78,7 @@ public class GithubRepositoryHandlerTest extends AbstractTest {
         OffsetDateTime fromDate = OffsetDateTime.now();
 
         server.stubFor(
-            get(urlEqualTo("/repos/%s/commits?since=%s".formatted(url.getPath(), fromDate)))
+            get(urlEqualTo("/repos%s/commits?since=%s".formatted(url.getPath(), fromDate)))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
@@ -85,7 +86,7 @@ public class GithubRepositoryHandlerTest extends AbstractTest {
             )
         );
         server.stubFor(
-            get(urlEqualTo("/repos/%s/issues?since=%s".formatted(url.getPath(), fromDate)))
+            get(urlEqualTo("/repos%s/issues?since=%s".formatted(url.getPath(), fromDate)))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
