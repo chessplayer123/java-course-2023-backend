@@ -5,8 +5,8 @@ import edu.java.exceptions.ChatIsNotRegisteredException;
 import edu.java.exceptions.InvalidLinkException;
 import edu.java.exceptions.LinkIsNotPresentException;
 import edu.java.exceptions.LinkIsNotSupportedException;
+import edu.java.exceptions.ReAddingChatException;
 import edu.java.exceptions.ReAddingLinkException;
-import edu.java.exceptions.ReAddingUserException;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -45,8 +45,8 @@ public class ControllerExceptionHandler {
         return wrapException(exception);
     }
 
-    @ExceptionHandler(ReAddingUserException.class)
-    public ResponseEntity<ApiErrorResponse> userReAdding(ReAddingUserException exception) {
+    @ExceptionHandler(ReAddingChatException.class)
+    public ResponseEntity<ApiErrorResponse> userReAdding(ReAddingChatException exception) {
         return wrapException(exception);
     }
 

@@ -13,8 +13,8 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-public class JdbcChatRepositoryTest  extends IntegrationEnvironment {
+@SpringBootTest(properties = {"app.scheduler.enable=false"})
+public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcChatRepository chatRepository;
     @Autowired

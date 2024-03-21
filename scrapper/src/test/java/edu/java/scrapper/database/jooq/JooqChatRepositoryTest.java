@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 import static edu.java.domain.jooq.Tables.CHAT;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = {"app.scheduler.enable=false"})
 public class JooqChatRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JooqChatRepository chatRepository;

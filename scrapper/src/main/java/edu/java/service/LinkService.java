@@ -23,6 +23,7 @@ public interface LinkService {
     @Transactional
     void update(Long linkId, OffsetDateTime updateTime) throws LinkIsNotPresentException;
 
+    @Transactional
     Collection<Link> getLinksCheckTimeExceedLimit(Duration limit);
 
     default void updateNow(Long linkId) throws LinkIsNotPresentException {

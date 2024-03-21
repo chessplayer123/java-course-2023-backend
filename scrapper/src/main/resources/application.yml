@@ -2,8 +2,8 @@ app:
   database-access-type: jdbc
   scheduler:
     enable: true
-    interval: 100s
-    force-check-delay: 100s
+    interval: 10s
+    force-check-delay: 10s
   api:
     github-url: https://api.github.com
     stackoverflow-url: https://api.stackexchange.com/2.3

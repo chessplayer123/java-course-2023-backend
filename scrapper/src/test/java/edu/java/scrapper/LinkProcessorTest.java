@@ -16,7 +16,7 @@ import java.net.URI;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest(classes = {ScrapperApplication.class})
+@SpringBootTest(classes = {ScrapperApplication.class}, properties = {"app.scheduler.enable=false"})
 public class LinkProcessorTest {
     @Autowired
     LinkProcessor processor;

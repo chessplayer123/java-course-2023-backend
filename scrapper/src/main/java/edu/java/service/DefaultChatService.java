@@ -1,7 +1,7 @@
 package edu.java.service;
 
 import edu.java.exceptions.ChatIsNotRegisteredException;
-import edu.java.exceptions.ReAddingUserException;
+import edu.java.exceptions.ReAddingChatException;
 import edu.java.repository.ChatRepository;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.SubscriptionRepository;
@@ -17,9 +17,9 @@ public class DefaultChatService implements ChatService {
     private final ChatRepository chatRepository;
 
     @Override
-    public void register(Long chatId) throws ReAddingUserException {
+    public void register(Long chatId) throws ReAddingChatException {
         if (chatRepository.findById(chatId).isPresent()) {
-            throw new ReAddingUserException();
+            throw new ReAddingChatException();
         }
         chatRepository.add(new Chat(chatId, OffsetDateTime.now()));
     }
@@ -35,6 +35,6 @@ public class DefaultChatService implements ChatService {
 
     @Override
     public List<Chat> findChatsTrackingLink(Long linkId) {
-        return subscriptionRepository.findByLinkId(linkId).stream().toList();
+        return subscriptionRepository.findByLinkId(linkId);
     }
 }

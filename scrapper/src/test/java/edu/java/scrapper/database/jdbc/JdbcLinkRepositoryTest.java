@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = {"app.scheduler.enable=false"})
 public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcLinkRepository linkRepository;

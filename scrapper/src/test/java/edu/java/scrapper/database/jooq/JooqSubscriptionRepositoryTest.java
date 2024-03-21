@@ -18,7 +18,7 @@ import static edu.java.domain.jooq.Tables.LINK;
 import static edu.java.domain.jooq.Tables.SUBSCRIPTION;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = {"app.scheduler.enable=false"})
 public class JooqSubscriptionRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JooqSubscriptionRepository subscriptionRepository;

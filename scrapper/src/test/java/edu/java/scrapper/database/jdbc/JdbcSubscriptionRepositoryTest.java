@@ -18,7 +18,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = {"app.scheduler.enable=false"})
 public class JdbcSubscriptionRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcSubscriptionRepository subscriptionRepository;

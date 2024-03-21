@@ -15,11 +15,13 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConditionalOnProperty(prefix = "app", name = "scheduler.enable", havingValue = "true")
 @EnableScheduling
 @Log4j2
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class LinkUpdaterScheduler {
     private final LinkService linkService;
     private final ChatService chatService;
     private final LinkProcessor linkProcessor;
+    private final Duration forceCheckDelay;
 
     private String formatUpdate(LinkUpdateEvent update) {
         return "Link %s was updated at %s:\n%s".formatted(
@@ -41,7 +44,7 @@ public class LinkUpdaterScheduler {
     private void updateLink(Link link) {
         ApiClient client = linkProcessor.findClient(link.url());
         List<LinkUpdateEvent> updates = client.retrieveUpdates(link.url(), link.lastCheckTime());
-//        linkService.updateNow(link.id());
+        linkService.updateNow(link.id());
 
         if (updates.isEmpty()) {
             return;
@@ -67,8 +70,8 @@ public class LinkUpdaterScheduler {
     @Scheduled(fixedDelayString = "#{@schedulerIntervalMs}")
     public void update() {
         log.info("Starting update");
-        for (Link link : linkService.getLinksCheckTimeExceedLimit(Duration.ofMinutes(1))) {
-//            updateLink(link);
+        for (Link link : linkService.getLinksCheckTimeExceedLimit(forceCheckDelay)) {
+            updateLink(link);
         }
         log.info("Update ended");
     }
