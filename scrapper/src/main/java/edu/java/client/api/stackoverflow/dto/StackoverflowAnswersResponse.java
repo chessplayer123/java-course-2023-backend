@@ -15,10 +15,13 @@ public record StackoverflowAnswersResponse(@JsonProperty("items") List<Answer> a
             .toList();
     }
 
-    private record Answer(Owner owner, @JsonProperty("creation_date") OffsetDateTime createdAt) {
+    private record Answer(Owner owner, @JsonProperty("creation_date") OffsetDateTime createdAt, String body) {
         @Override
         public String toString() {
-            return "New answer by %s".formatted(owner.name);
+            if (body == null) {
+                return "New answer by %s".formatted(owner.name);
+            }
+            return "New answer by %s:\n%s".formatted(owner.name, body);
         }
     }
 

@@ -3,7 +3,6 @@ package edu.java.scrapper.client;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.client.api.LinkUpdateEvent;
 import edu.java.client.api.github.GithubClient;
-import edu.java.client.api.github.dto.GithubCommitsResponse;
 import edu.java.client.api.github.handlers.GithubRepositoryHandler;
 import edu.java.exceptions.InvalidLinkException;
 import edu.java.response.LinkApiResponse;
@@ -15,17 +14,14 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.from;
 
-public class GithubClientTest extends AbstractTest {
+public class GithubRepositoryHandlerTest extends AbstractTest {
     private static final WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
     private final GithubClient githubClient = new GithubClient(server.baseUrl(), List.of(
         new GithubRepositoryHandler())
@@ -76,12 +72,12 @@ public class GithubClientTest extends AbstractTest {
 
     @Test
     @SneakyThrows
-    public void retrieveCommitsShouldReturnExpectedEvents() {
+    public void retrieveUpdatesShouldReturnExpectedEvents() {
         URI url = URI.create("https://github.com/userName/repoName");
         OffsetDateTime fromDate = OffsetDateTime.now();
 
         server.stubFor(
-            get(urlEqualTo("/repos%s/commits?since=%s".formatted(url.getPath(), fromDate)))
+            get(urlEqualTo("/repos/%s/commits?since=%s".formatted(url.getPath(), fromDate)))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
@@ -89,7 +85,7 @@ public class GithubClientTest extends AbstractTest {
             )
         );
         server.stubFor(
-            get(urlEqualTo("/repos%s/issues?since=%s".formatted(url.getPath(), fromDate)))
+            get(urlEqualTo("/repos/%s/issues?since=%s".formatted(url.getPath(), fromDate)))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
