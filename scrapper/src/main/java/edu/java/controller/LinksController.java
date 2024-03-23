@@ -6,9 +6,8 @@ import edu.java.dto.request.UntrackLinkRequest;
 import edu.java.dto.response.ApiErrorResponse;
 import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinkResponse;
-import edu.java.link.LinkProcessor;
-import edu.java.response.LinkInfo;
-import edu.java.service.Link;
+import edu.java.processor.LinkProcessor;
+import edu.java.response.LinkApiResponse;
 import edu.java.service.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -58,8 +57,9 @@ public class LinksController {
         @RequestBody
         UntrackLinkRequest request
     ) {
-        Link link = service.untrack(chatId, URI.create(request.link()));
-        return new LinkResponse(link.id(), link.info().getLink());
+        URI url = URI.create(request.link());
+        Long trackedLinkId = service.untrack(chatId, url);
+        return new LinkResponse(trackedLinkId, url, null);
     }
 
     @Operation(summary = "Add link to tracking list")
@@ -87,9 +87,10 @@ public class LinksController {
     ) {
         URI link = URI.create(request.link());
         ApiClient client = processor.findClient(link);
-        LinkInfo response = client.fetch(link);
-        Link addedLink = service.track(chatId, response);
-        return new LinkResponse(addedLink.id(), addedLink.info().getLink());
+        LinkApiResponse response = client.fetch(link);
+        String description = response.getSummary();
+        Long addedLinkId = service.track(chatId, link, description);
+        return new LinkResponse(addedLinkId, link, description);
     }
 
     @Operation(summary = "Get all user's tracked links")
@@ -112,7 +113,7 @@ public class LinksController {
         List<LinkResponse> links = service
             .listAll(chatId)
             .stream()
-            .map(entry -> new LinkResponse(entry.id(), entry.info().getLink()))
+            .map(link -> new LinkResponse(link.id(), link.url(), link.description()))
             .toList();
         return new ListLinkResponse(links, links.size());
     }

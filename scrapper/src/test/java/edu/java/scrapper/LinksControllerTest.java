@@ -2,9 +2,9 @@ package edu.java.scrapper;
 
 import edu.java.client.api.ApiClient;
 import edu.java.controller.LinksController;
-import edu.java.link.LinkProcessor;
-import edu.java.response.LinkInfo;
-import edu.java.service.Link;
+import edu.java.processor.LinkProcessor;
+import edu.java.response.LinkApiResponse;
+import edu.java.repository.dto.Link;
 import edu.java.service.LinkService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,13 +39,14 @@ public class LinksControllerTest  {
         URI url = URI.create("https://github.com");
         Long chatId = 123L;
         ApiClient client = Mockito.mock(ApiClient.class);
-        LinkInfo info = Mockito.mock(LinkInfo.class);
-        Link expectedLink = new Link(0L, info);
+        LinkApiResponse info = Mockito.mock(LinkApiResponse.class);
+        String linkSummary = "Test summary";
+        Long expectedLinkId = 0L;
 
+        Mockito.when(info.getSummary()).thenReturn(linkSummary);
         Mockito.when(processor.findClient(url)).thenReturn(client);
         Mockito.when(client.fetch(url)).thenReturn(info);
-        Mockito.when(service.track(chatId, info)).thenReturn(expectedLink);
-        Mockito.when(info.getLink()).thenReturn(url);
+        Mockito.when(service.track(chatId, url, linkSummary)).thenReturn(expectedLinkId);
 
         mockMvc.perform(post("/links")
                 .header("Tg-Chat-Id", String.valueOf(chatId))
@@ -60,11 +62,11 @@ public class LinksControllerTest  {
             {
                 "id": %d,
                 "url": "%s"
-            }""".formatted(expectedLink.id(), expectedLink.info().getLink())));
+            }""".formatted(expectedLinkId, url)));
 
         Mockito
             .verify(service)
-            .track(chatId, info);
+            .track(chatId, url, linkSummary);
     }
 
     @Test
@@ -72,11 +74,9 @@ public class LinksControllerTest  {
     public void untrackLinkShouldCallLinkServiceMethod() {
         URI url = URI.create("https://stackoverflow.com");
         Long chatId = 123L;
-        LinkInfo info = Mockito.mock(LinkInfo.class);
-        Link removedLink = new Link(0L, info);
+        Long removedLinkId = 10L;
 
-        Mockito.when(info.getLink()).thenReturn(url);
-        Mockito.when(service.untrack(chatId, url)).thenReturn(removedLink);
+        Mockito.when(service.untrack(chatId, url)).thenReturn(removedLinkId);
 
         mockMvc.perform(delete("/links")
                 .header("Tg-Chat-Id", String.valueOf(chatId))
@@ -92,7 +92,7 @@ public class LinksControllerTest  {
             {
                 "id": %d,
                 "url": "%s"
-            }""".formatted(removedLink.id(), removedLink.info().getLink())));
+            }""".formatted(removedLinkId, url)));
 
         Mockito
             .verify(service)
@@ -104,15 +104,13 @@ public class LinksControllerTest  {
     public void listLinksShouldReturnExpectedResponse() {
         Long chatId = 123L;
 
-        LinkInfo link1 = Mockito.mock(LinkInfo.class);
-        Mockito.when(link1.getLink()).thenReturn(URI.create("https://github.com"));
-
-        LinkInfo link2 = Mockito.mock(LinkInfo.class);
-        Mockito.when(link2.getLink()).thenReturn(URI.create("https://stackoverflow.com"));
+        URI link1 = URI.create("https://github.com");
+        URI link2 = URI.create("https://stackoverflow.com");
+        OffsetDateTime now = OffsetDateTime.now();
 
         Mockito.when(service.listAll(chatId)).thenReturn(List.of(
-            new Link(0L, link1),
-            new Link(1L, link2)
+            new Link(0L, link1, "", now, now),
+            new Link(1L, link2, "", now, now)
         ));
 
         mockMvc

@@ -34,7 +34,7 @@ public class ScrapperClient {
             .uri("/tg-chat/{chatId}", chatId)
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .onStatus(HttpStatusCode::isError, this::handleApiError)
+            .onStatus(HttpStatusCode::is4xxClientError, this::handleApiError)
             .toBodilessEntity()
             .block();
     }
@@ -45,7 +45,7 @@ public class ScrapperClient {
             .uri("/tg-chat/{chatId}", chatId)
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .onStatus(HttpStatusCode::isError, this::handleApiError)
+            .onStatus(HttpStatusCode::is4xxClientError, this::handleApiError)
             .toBodilessEntity()
             .block();
     }
@@ -58,7 +58,7 @@ public class ScrapperClient {
             .bodyValue(new TrackLinkRequest(link))
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .onStatus(HttpStatusCode::isError, this::handleApiError)
+            .onStatus(HttpStatusCode::is4xxClientError, this::handleApiError)
             .bodyToMono(LinkResponse.class)
             .block();
     }
@@ -71,7 +71,7 @@ public class ScrapperClient {
             .header("Tg-Chat-Id", String.valueOf(chatId))
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .onStatus(HttpStatusCode::isError, this::handleApiError)
+            .onStatus(HttpStatusCode::is4xxClientError, this::handleApiError)
             .bodyToMono(LinkResponse.class)
             .block();
     }
@@ -83,7 +83,7 @@ public class ScrapperClient {
             .header("Tg-Chat-Id", String.valueOf(chatId))
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .onStatus(HttpStatusCode::isError, this::handleApiError)
+            .onStatus(HttpStatusCode::is4xxClientError, this::handleApiError)
             .bodyToMono(ListLinkResponse.class)
             .block();
     }

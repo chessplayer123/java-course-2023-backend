@@ -26,9 +26,8 @@ public class LinkTrackerBot implements Bot {
         for (Update update : updates) {
             SendResponse response = telegramBot.execute(chatProcessor.process(update));
             if (!response.isOk()) {
-                log.warn(
-                    "Error occurred [code=%d], while trying to process '%s'"
-                        .formatted(response.errorCode(), update.message().text())
+                log.warn("Error occurred {}, while trying to process '{}'",
+                    response.description(), update.message().text()
                 );
             }
         }
@@ -36,13 +35,12 @@ public class LinkTrackerBot implements Bot {
     }
 
     @Override
-    public void sendMessage(Long chatId, String message) throws TgChatBotException {
-        SendResponse response = telegramBot.execute(new SendMessage(chatId, message));
+    public void sendMessage(SendMessage sendMessage) throws TgChatBotException {
+        SendResponse response = telegramBot.execute(sendMessage);
         if (!response.isOk()) {
             throw new TgChatBotException(
                 response.description(),
-                String.valueOf(response.errorCode()),
-                "Can't send message to %d".formatted(chatId)
+                "Can't send message"
             );
         }
     }

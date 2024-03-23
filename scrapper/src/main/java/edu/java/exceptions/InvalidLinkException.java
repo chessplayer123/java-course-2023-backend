@@ -1,11 +1,10 @@
 package edu.java.exceptions;
 
-public class InvalidLinkException extends Exception {
-    public InvalidLinkException() {
-        super("Invalid link");
-    }
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-    public String getDescription() {
-        return "Link is not valid";
+public class InvalidLinkException extends ResponseStatusException {
+    public InvalidLinkException() {
+        super(HttpStatus.BAD_REQUEST, "Link is not valid");
     }
 }

@@ -5,6 +5,8 @@ import edu.java.dto.response.ApiErrorResponse;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -18,13 +20,15 @@ public class UpdatesExceptionHandler {
     }
 
     @ExceptionHandler(TgChatBotException.class)
-    public ApiErrorResponse tgChatBotException(TgChatBotException e) {
-        return new ApiErrorResponse(
-            e.getDescription(),
-            e.getErrorCode(),
-            e.getClass().getName(),
-            e.getErrorMessage(),
-            getStackStrace(e)
-        );
+    public ResponseEntity<ApiErrorResponse> tgChatBotException(TgChatBotException e) {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(new ApiErrorResponse(
+                e.getDescription(),
+                String.valueOf(HttpStatus.BAD_REQUEST.value()),
+                e.getClass().getName(),
+                e.getErrorMessage(),
+                getStackStrace(e)
+            ));
     }
 }

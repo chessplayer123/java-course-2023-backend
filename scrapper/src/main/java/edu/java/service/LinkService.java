@@ -1,16 +1,32 @@
 package edu.java.service;
 
+import edu.java.exceptions.ChatIsNotRegisteredException;
 import edu.java.exceptions.LinkIsNotPresentException;
 import edu.java.exceptions.ReAddingLinkException;
-import edu.java.exceptions.UserIsNotRegisteredException;
-import edu.java.response.LinkInfo;
+import edu.java.repository.dto.Link;
 import java.net.URI;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.Collection;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface LinkService {
-    Link track(Long chatId, LinkInfo url) throws ReAddingLinkException, UserIsNotRegisteredException;
+    @Transactional
+    Long track(Long chatId, URI info, String description) throws ReAddingLinkException, ChatIsNotRegisteredException;
 
-    Link untrack(Long chatId, URI url) throws UserIsNotRegisteredException, LinkIsNotPresentException;
+    @Transactional
+    Long untrack(Long chatId, URI url) throws ChatIsNotRegisteredException, LinkIsNotPresentException;
 
-    Collection<Link> listAll(Long chatId) throws UserIsNotRegisteredException;
+    @Transactional
+    Collection<Link> listAll(Long chatId) throws ChatIsNotRegisteredException;
+
+    @Transactional
+    void update(Long linkId, OffsetDateTime updateTime) throws LinkIsNotPresentException;
+
+    @Transactional
+    Collection<Link> getLinksCheckTimeExceedLimit(Duration limit);
+
+    default void updateNow(Long linkId) throws LinkIsNotPresentException {
+        update(linkId, OffsetDateTime.now());
+    }
 }

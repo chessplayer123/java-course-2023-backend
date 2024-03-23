@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.exceptions.CommandException;
 import edu.java.bot.service.UserService;
+import edu.java.dto.response.LinkResponse;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,8 +39,16 @@ public class UntrackCommand implements Command {
 
     public SendMessage handleCallback(Update update) throws CommandException {
         long userId = update.callbackQuery().from().id();
-        String link = update.callbackQuery().data();
-        userService.unTrackLink(userId, link);
+        long linkId = Long.parseLong(update.callbackQuery().data());
+        String url = userService.getTrackedLinks(userId)
+            .stream()
+            .filter(link -> link.id().equals(linkId))
+            .findAny()
+            .orElseThrow(() -> new CommandException("Link was already removed"))
+            .url()
+            .toString();
+
+        userService.unTrackLink(userId, url);
         return new SendMessage(
             userId,
             "Link was successfully untracked"
@@ -52,7 +61,7 @@ public class UntrackCommand implements Command {
             return handleCallback(update);
         }
 
-        List<String> links = userService.getTrackedLinks(update.message().chat().id());
+        List<LinkResponse> links = userService.getTrackedLinks(update.message().chat().id());
         if (links.isEmpty()) {
             return new SendMessage(update.message().chat().id(), "Your tracking list is empty");
         }
@@ -61,7 +70,8 @@ public class UntrackCommand implements Command {
             .replyMarkup(new InlineKeyboardMarkup(
                 links.stream()
                 .map(link -> new InlineKeyboardButton[] {
-                    new InlineKeyboardButton(link).callbackData(link)
+                    new InlineKeyboardButton(link.url().toString())
+                        .callbackData(String.valueOf(link.id()))
                 }).toArray(InlineKeyboardButton[][]::new)
             )
         );

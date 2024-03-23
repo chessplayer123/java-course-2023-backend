@@ -4,9 +4,8 @@ import edu.java.ScrapperApplication;
 import edu.java.client.api.github.GithubClient;
 import edu.java.client.api.stackoverflow.StackoverflowClient;
 import edu.java.exceptions.LinkIsNotSupportedException;
-import edu.java.link.LinkProcessor;
+import edu.java.processor.LinkProcessor;
 import lombok.SneakyThrows;
-import org.apache.commons.validator.Arg;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,7 +16,7 @@ import java.net.URI;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest(classes = {ScrapperApplication.class})
+@SpringBootTest(classes = {ScrapperApplication.class}, properties = {"app.scheduler.enable=false"})
 public class LinkProcessorTest {
     @Autowired
     LinkProcessor processor;

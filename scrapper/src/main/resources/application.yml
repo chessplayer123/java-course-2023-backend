@@ -1,6 +1,7 @@
 app:
+  database-access-type: jdbc
   scheduler:
-    enable: true
+    enable: false
     interval: 10s
     force-check-delay: 10s
   api:
@@ -11,8 +12,12 @@ app:
 spring:
   application:
     name: scrapper
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/scrapper
+    username: postgres
+    password: postgres
+  liquibase:
+    enabled: false
 
 springdoc:
   swagger-ui:

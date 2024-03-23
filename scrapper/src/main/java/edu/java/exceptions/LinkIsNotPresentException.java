@@ -1,11 +1,10 @@
 package edu.java.exceptions;
 
-public class LinkIsNotPresentException extends Exception {
-    public LinkIsNotPresentException() {
-        super("Attempting to delete not present link");
-    }
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-    public String getDescription() {
-        return "Link is not in your track list";
+public class LinkIsNotPresentException extends ResponseStatusException {
+    public LinkIsNotPresentException() {
+        super(HttpStatus.NOT_FOUND, "Link is not in your track list");
     }
 }

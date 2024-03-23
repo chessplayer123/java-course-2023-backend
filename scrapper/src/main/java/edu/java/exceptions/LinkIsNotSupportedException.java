@@ -1,11 +1,10 @@
 package edu.java.exceptions;
 
-public class LinkIsNotSupportedException extends Exception {
-    public LinkIsNotSupportedException() {
-        super("Attempting to track unsupported link");
-    }
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-    public String getDescription() {
-        return "Link is not supported";
+public class LinkIsNotSupportedException extends ResponseStatusException {
+    public LinkIsNotSupportedException() {
+        super(HttpStatus.BAD_REQUEST, "Link is not supported");
     }
 }

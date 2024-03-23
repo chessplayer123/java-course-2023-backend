@@ -7,6 +7,5 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class TgChatBotException extends Exception {
     private final String description;
-    private final String errorCode;
     private final String errorMessage;
 }

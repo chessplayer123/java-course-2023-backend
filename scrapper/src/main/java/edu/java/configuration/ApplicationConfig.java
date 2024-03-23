@@ -9,10 +9,17 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 public record ApplicationConfig(
     @NotNull
+    AccessType databaseAccessType,
+    @NotNull
     Scheduler scheduler,
     @NotNull
     ClientApi api
 ) {
+    public enum AccessType {
+        JDBC,
+        JOOQ,
+    }
+
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
     }
 
