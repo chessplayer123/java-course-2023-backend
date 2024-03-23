@@ -8,12 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(properties = {"app.scheduler.enable=false"})
 public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcChatRepository chatRepository;
@@ -42,17 +42,12 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
+    @Sql("/sql/chat.sql")
     void removeChatByIdShouldDeleteRecord() {
-        Long chatId = 271828L;
-
-        client.sql("INSERT INTO chat(id) VALUES(?);")
-            .params(chatId)
-            .update();
-
-        chatRepository.remove(chatId);
+        chatRepository.remove(1L);
 
         boolean isChatPresent = client.sql("SELECT * from chat WHERE id = ?;")
-            .params(chatId)
+            .params(1L)
             .query(Chat.class)
             .optional()
             .isPresent();
@@ -63,14 +58,9 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
+    @Sql("/sql/chat.sql")
     void findChatByIdShouldReturnChat() {
-        Long chatId = 271828L;
-
-        client.sql("INSERT INTO chat(id) VALUES(?);")
-            .params(chatId)
-            .update();
-
-        Optional<Chat> foundChat = chatRepository.findById(chatId);
+        Optional<Chat> foundChat = chatRepository.findById(1L);
 
         assertThat(foundChat).isPresent();
     }

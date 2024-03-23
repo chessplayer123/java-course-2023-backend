@@ -7,6 +7,7 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.DirectoryResourceAccessor;
 import lombok.SneakyThrows;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
@@ -16,6 +17,7 @@ import java.nio.file.Path;
 import java.sql.Connection;
 
 @Testcontainers
+@SpringBootTest(properties = {"app.scheduler.enable=false"})
 public abstract class IntegrationEnvironment {
     public static PostgreSQLContainer<?> POSTGRES;
 

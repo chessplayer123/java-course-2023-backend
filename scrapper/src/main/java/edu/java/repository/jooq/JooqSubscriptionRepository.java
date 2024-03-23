@@ -60,5 +60,4 @@ public class JooqSubscriptionRepository implements SubscriptionRepository {
             .and(SUBSCRIPTION.LINK_ID.equal(LINK.ID))
             .fetchInto(Link.class);
     }
-
 }

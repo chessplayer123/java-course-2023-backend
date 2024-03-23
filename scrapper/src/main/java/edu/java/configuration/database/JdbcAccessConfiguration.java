@@ -6,6 +6,7 @@ import edu.java.repository.jdbc.JdbcSubscriptionRepository;
 import edu.java.service.ChatService;
 import edu.java.service.DefaultChatService;
 import edu.java.service.DefaultLinkService;
+import edu.java.service.LinkService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jdbc")
 public class JdbcAccessConfiguration {
     @Bean
-    public edu.java.service.LinkService jdbcLinkService(
+    public LinkService jdbcLinkService(
         JdbcLinkRepository linkRepository,
         JdbcSubscriptionRepository subscriptionRepository,
         JdbcChatRepository chatRepository

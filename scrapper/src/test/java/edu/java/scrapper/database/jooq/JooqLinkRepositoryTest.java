@@ -20,7 +20,6 @@ import static edu.java.domain.jooq.Tables.LINK;
 import static edu.java.domain.jooq.Tables.SUBSCRIPTION;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(properties = {"app.scheduler.enable=false"})
 public class JooqLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JooqLinkRepository linkRepository;
