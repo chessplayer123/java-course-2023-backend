@@ -18,6 +18,9 @@ spring:
     password: postgres
   liquibase:
     enabled: false
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
 
 springdoc:
   swagger-ui:
