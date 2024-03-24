@@ -28,10 +28,7 @@ public class UntrackCommand implements Command {
 
     @Override
     public boolean supports(Update update) {
-        if (update.message() == null) {
-            return true;
-        }
-        return update.message().text().equals(command());
+        return update.callbackQuery() != null || update.message().text().equals(command());
     }
 
     public SendMessage handleCallback(Update update) throws CommandException {
@@ -53,7 +50,7 @@ public class UntrackCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) throws CommandException {
-        if (update.message() == null) {
+        if (update.callbackQuery() != null) {
             return handleCallback(update);
         }
 
