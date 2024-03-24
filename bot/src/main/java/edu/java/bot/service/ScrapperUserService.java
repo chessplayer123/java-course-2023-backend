@@ -54,7 +54,7 @@ public class ScrapperUserService implements UserService {
     }
 
     @Override
-    public void unTrackLink(Long chatId, String link) throws CommandException {
+    public void untrackLink(Long chatId, String link) throws CommandException {
         try {
             client.deleteLink(chatId, link);
         } catch (WebClientRequestException e) {

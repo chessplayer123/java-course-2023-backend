@@ -1,5 +1,5 @@
 app:
-  database-access-type: jdbc
+  database-access-type: jpa
   scheduler:
     enable: false
     interval: 10s
@@ -18,6 +18,9 @@ spring:
     password: postgres
   liquibase:
     enabled: false
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
 
 springdoc:
   swagger-ui:

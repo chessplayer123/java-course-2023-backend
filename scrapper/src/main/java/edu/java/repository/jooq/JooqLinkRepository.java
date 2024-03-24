@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import static edu.java.domain.jooq.Tables.LINK;
 import static edu.java.domain.jooq.Tables.SUBSCRIPTION;
 
 @Repository
+@Lazy
 @RequiredArgsConstructor
 public class JooqLinkRepository implements LinkRepository {
     private final DSLContext dslContext;

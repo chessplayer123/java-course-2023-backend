@@ -13,5 +13,5 @@ public interface UserService {
 
     void trackLink(Long chatId, String link) throws CommandException;
 
-    void unTrackLink(Long chatId, String link) throws CommandException;
+    void untrackLink(Long chatId, String link) throws CommandException;
 }
