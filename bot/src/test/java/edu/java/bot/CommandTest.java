@@ -164,6 +164,6 @@ public class CommandTest extends AbstractTest {
 
         Mockito
             .verify(userService)
-            .unTrackLink(userId, "https://github.com");
+            .untrackLink(userId, "https://github.com");
     }
 }

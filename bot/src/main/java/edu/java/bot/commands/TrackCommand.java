@@ -40,7 +40,7 @@ public class TrackCommand implements Command {
         long userId = update.message().chat().id();
         if (!expectedUsers.contains(userId)) {
             expectedUsers.add(userId);
-            return new SendMessage(userId, "Enter the link:");
+            return new SendMessage(userId, "Enter the link");
         }
         expectedUsers.remove(userId);
         userService.trackLink(userId, update.message().text());

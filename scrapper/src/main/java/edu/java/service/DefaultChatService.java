@@ -26,7 +26,7 @@ public class DefaultChatService implements ChatService {
 
     @Override
     public void unregister(Long chatId) throws ChatIsNotRegisteredException {
-        if (!chatRepository.findById(chatId).isPresent()) {
+        if (chatRepository.findById(chatId).isEmpty()) {
             throw new ChatIsNotRegisteredException();
         }
         chatRepository.remove(chatId);

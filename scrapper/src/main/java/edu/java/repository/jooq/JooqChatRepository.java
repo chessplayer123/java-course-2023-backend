@@ -5,10 +5,12 @@ import edu.java.repository.dto.Chat;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import static edu.java.domain.jooq.Tables.CHAT;
 
 @Repository
+@Lazy
 @RequiredArgsConstructor
 public class JooqChatRepository implements ChatRepository {
     private final DSLContext dslContext;

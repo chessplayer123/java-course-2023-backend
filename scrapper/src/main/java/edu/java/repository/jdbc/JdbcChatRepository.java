@@ -4,10 +4,12 @@ import edu.java.repository.ChatRepository;
 import edu.java.repository.dto.Chat;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@Lazy
 @RequiredArgsConstructor
 public class JdbcChatRepository implements ChatRepository {
     private final JdbcClient jdbcClient;

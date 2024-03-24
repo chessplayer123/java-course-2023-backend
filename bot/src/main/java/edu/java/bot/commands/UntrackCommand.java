@@ -7,9 +7,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.exceptions.CommandException;
 import edu.java.bot.service.UserService;
 import edu.java.dto.response.LinkResponse;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +15,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class UntrackCommand implements Command {
     private final UserService userService;
-    private final Set<Long> expectedUsers = new HashSet<>();
 
     @Override
     public String command() {
@@ -32,7 +29,7 @@ public class UntrackCommand implements Command {
     @Override
     public boolean supports(Update update) {
         if (update.message() == null) {
-            return expectedUsers.contains(update.callbackQuery().from().id());
+            return true;
         }
         return update.message().text().equals(command());
     }
@@ -40,6 +37,7 @@ public class UntrackCommand implements Command {
     public SendMessage handleCallback(Update update) throws CommandException {
         long userId = update.callbackQuery().from().id();
         long linkId = Long.parseLong(update.callbackQuery().data());
+
         String url = userService.getTrackedLinks(userId)
             .stream()
             .filter(link -> link.id().equals(linkId))
@@ -48,11 +46,9 @@ public class UntrackCommand implements Command {
             .url()
             .toString();
 
-        userService.unTrackLink(userId, url);
-        return new SendMessage(
-            userId,
-            "Link was successfully untracked"
-        );
+        userService.untrackLink(userId, url);
+
+        return new SendMessage(userId, "Link was successfully untracked");
     }
 
     @Override
@@ -65,7 +61,7 @@ public class UntrackCommand implements Command {
         if (links.isEmpty()) {
             return new SendMessage(update.message().chat().id(), "Your tracking list is empty");
         }
-        expectedUsers.add(update.message().chat().id());
+
         return new SendMessage(update.message().chat().id(), "Choose link to untrack")
             .replyMarkup(new InlineKeyboardMarkup(
                 links.stream()

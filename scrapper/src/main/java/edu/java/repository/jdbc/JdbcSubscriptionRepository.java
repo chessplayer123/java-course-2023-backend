@@ -7,10 +7,12 @@ import edu.java.repository.dto.Subscription;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@Lazy
 @RequiredArgsConstructor
 public class JdbcSubscriptionRepository implements SubscriptionRepository {
     private final JdbcClient jdbcClient;

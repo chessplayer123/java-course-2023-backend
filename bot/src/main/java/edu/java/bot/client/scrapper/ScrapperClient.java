@@ -28,7 +28,7 @@ public class ScrapperClient {
             .flatMap(body -> Mono.error(new CommandException(body.description())));
     }
 
-    public void registerChat(Long chatId) throws CommandException {
+    public void registerChat(Long chatId) {
         webClient
             .post()
             .uri("/tg-chat/{chatId}", chatId)
