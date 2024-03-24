@@ -7,7 +7,6 @@ import edu.java.repository.dto.Chat;
 import edu.java.repository.jpa.JpaChatRepository;
 import edu.java.repository.jpa.JpaLinkRepository;
 import edu.java.repository.jpa.entity.ChatEntity;
-import edu.java.repository.jpa.entity.LinkEntity;
 import edu.java.service.ChatService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -27,17 +26,12 @@ public class JpaChatService implements ChatService {
 
     @Override
     public void unregister(Long chatId) throws ChatIsNotRegisteredException {
-        ChatEntity chat = chatRepository
+        chatRepository
             .findById(chatId)
             .orElseThrow(ChatIsNotRegisteredException::new);
 
-        for (LinkEntity trackedLink : chat.getTrackedLinks()) {
-            chat.removeLink(trackedLink);
-            if (trackedLink.getSubscribedChats().isEmpty()) {
-                linkRepository.delete(trackedLink);
-            }
-        }
         chatRepository.deleteById(chatId);
+        linkRepository.prune();
     }
 
     @Override
